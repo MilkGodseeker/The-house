@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>THE HOUSE — Alpha 0.1.21</title>
+<title>THE HOUSE — Alpha 0.1.22</title>
 <style>
 :root{
   --bg:#080b12;--panel:#111722;--panel2:#151c28;--line:#273247;--text:#f4f7fb;
@@ -47,12 +47,26 @@ main{padding:4px 18px}.card{background:var(--panel);border:1px solid var(--line)
 
 /* Alpha 0.1.7 — Permanent Item Overhaul */
 .permBadge{display:inline-flex;align-items:center;gap:4px;margin-left:5px;padding:2px 6px;border-radius:999px;background:#18263a;border:1px solid #4b648f;color:#a9c9ff;font-size:10px;font-weight:800;vertical-align:middle}.permEffect{margin-top:7px;padding:7px 8px;border-radius:9px;background:#172236;border:1px solid #334b70;color:#b9d3f5;font-size:11px;line-height:1.35}.permLock{position:absolute;top:8px;right:8px;font-size:15px;filter:drop-shadow(0 2px 5px rgba(0,0,0,.35))}.permanentSlot{position:relative}
+
+/* Alpha 0.1.22 — Last Call mini-game */
+.lastCallCard{background:linear-gradient(145deg,#151d2b,#101620);border-color:#34445e}
+.lastCallStatus{display:flex;justify-content:space-between;gap:10px;align-items:center;margin:12px 0}
+.lastCallSignal{min-height:92px;border:1px solid #34445e;border-radius:16px;background:#0c121c;display:grid;place-items:center;text-align:center;padding:14px;font-weight:800;font-size:18px}
+.lastCallSignal.ready{border-color:#7ce7b3;background:#10241e;color:#7ce7b3}
+.lastCallSignal.false{border-color:#ff6678;background:#29151b;color:#ff9aa6}
+.lastCallGuide{position:fixed;inset:0;z-index:120;background:rgba(3,6,11,.86);backdrop-filter:blur(9px);display:grid;place-items:center;padding:18px}
+.lastCallGuideBox{width:min(100%,520px);max-height:88vh;overflow:auto;background:var(--panel2);border:1px solid #42516e;border-radius:22px;padding:22px;box-shadow:0 24px 80px rgba(0,0,0,.6)}
+.lastCallGuideBox h2{margin:0 0 8px;font-size:25px}.lastCallGuideBox li{margin:8px 0;color:#d1d9e6;line-height:1.45}
+.lastCallCheck{display:flex;gap:10px;align-items:flex-start;margin:18px 0;padding:12px;background:#0e141e;border:1px solid var(--line);border-radius:12px;line-height:1.4}
+.lastCallCheck input{width:20px;height:20px;accent-color:var(--accent);flex:0 0 auto;margin-top:1px}
+.lastCallActions{display:flex;gap:8px}.lastCallActions button{flex:1}
+
 </style>
 </head>
 <body>
 <div class="app">
 <header class="top">
-  <div class="brand"><h1>♣ THE HOUSE</h1><div class="badge"><i class="dot"></i> ALPHA 0.1.21</div></div>
+  <div class="brand"><h1>♣ THE HOUSE</h1><div class="badge"><i class="dot"></i> ALPHA 0.1.22</div></div>
   <div class="wallet" id="cash">0 <span>🪙</span></div>
   <div class="stats">
     <div class="stat"><b id="dayStat">1</b><small>ДЕНЬ</small></div>
@@ -76,6 +90,22 @@ main{padding:4px 18px}.card{background:var(--panel);border:1px solid var(--line)
     <div class="limitWrap"><div class="row"><span class="tiny">Прогресс лимита</span><b id="dayEarned">0 / 600 🪙</b></div><div class="limitBar"><div id="dayLimitBar"></div></div></div>
     <div class="divider"></div>
     <button class="bigbtn goldbtn" id="goEvening">🌆 Завершить рабочий день → открыть рынок</button>
+  </div>
+  <div class="card lastCallCard" id="lastCallCard">
+    <div class="row">
+      <div><div class="title">⏱️ Последний звонок</div><div class="sub">Пять раундов на реакцию. Лови зелёный сигнал и зарабатывай без кликов по монете.</div></div>
+      <button class="ghost" id="lastCallInfo" aria-label="Правила Последнего звонка" title="Правила">ⓘ</button>
+    </div>
+    <div class="lastCallStatus"><span class="tiny">Раунд: <b id="lastCallRound">0/5</b></span><span class="tiny">Заработано: <b id="lastCallReward">0 🪙</b></span></div>
+    <div class="lastCallSignal" id="lastCallSignal">Нажми «Начать игру», когда будешь готов.</div>
+    <div class="notice" id="lastCallFeedback" style="margin-top:10px">Сигнал появится через случайный промежуток времени. Не нажимай слишком рано.</div>
+    <div class="choices" style="margin-top:10px">
+      <button class="choice selected" id="lastCallSafe"><b>🟢 Спокойно</b><small>Без ставки и риска</small></button>
+      <button class="choice" id="lastCallRisk"><b>🔥 Рискнуть</b><small id="lastCallRiskLabel">Ставка — 5% лимита</small></button>
+    </div>
+    <button class="bigbtn" id="lastCallStart" style="margin-top:12px">▶ Начать игру</button>
+    <button class="bigbtn hidden" id="lastCallHit" style="margin-top:12px">⚡ СИГНАЛ!</button>
+    <div class="tiny" style="margin-top:9px">Награда учитывается в общем дневном лимите заработка. Максимум базовой награды — 15% лимита за игру.</div>
   </div>
   <div class="card" id="eventCard">
     <div class="row"><div class="title">🎲 Событие дня</div><span class="tiny" id="eventStatus">—</span></div>
@@ -168,6 +198,25 @@ main{padding:4px 18px}.card{background:var(--panel);border:1px solid var(--line)
     <button class="resetRun" id="resetRun">Начать заново с первого дня</button>
   </div>
 </div>
+<div class="lastCallGuide hidden" id="lastCallGuide" role="dialog" aria-modal="true" aria-labelledby="lastCallGuideTitle">
+  <div class="lastCallGuideBox">
+    <div class="tiny">THE HOUSE · МИНИ-ИГРА</div>
+    <h2 id="lastCallGuideTitle">⏱️ Последний звонок</h2>
+    <div class="sub">Проверь реакцию: не спеши — дождись сигнала.</div>
+    <ol>
+      <li>В игре будет <b>5 раундов</b>. Сначала экран покажет ожидание — в это время кнопку нажимать нельзя.</li>
+      <li>Когда появится зелёный сигнал <b>«СЕЙЧАС!»</b>, нажми кнопку как можно быстрее. Раннее нажатие считается ошибкой.</li>
+      <li>Чем быстрее реакция, тем выше награда: до <b>3% дневного лимита за раунд</b>. Максимальная базовая награда — 15% лимита.</li>
+      <li><b>Спокойно:</b> без ставки. <b>Рискнуть:</b> ставка равна 5% дневного лимита; при 4–5 успешных раундах ставка возвращается и даёт такую же сумму дополнительного дохода. При меньшем результате ставка теряется.</li>
+      <li>Награда мини-игры входит в общий дневной лимит вместе с заработком за монету. Игра недоступна вне дневной фазы или после исчерпания лимита.</li>
+    </ol>
+    <label class="lastCallCheck"><input type="checkbox" id="lastCallAgree"><span>Я ознакомился с правилами игры.</span></label>
+    <div class="lastCallActions">
+      <button class="ghost" id="lastCallGuideClose">Закрыть</button>
+      <button class="bigbtn" id="lastCallGuideAccept" disabled>Понятно, играть</button>
+    </div>
+  </div>
+</div>
 <div class="toast" id="toast"></div>
 
 <script>
@@ -253,6 +302,7 @@ function fresh(){
     permanent:[null,null],permanentUnlocked:0,permanentOfferedToday:false,rerolls:0,event:null,spins:0,betIndex:0,shopBalanceSnapshot:null,shopScale:null,shopPricingVersion:1,
     grid:[],lastWin:"Сделай крутку. Каждая выигрышная линия оплачивается отдельно.",debtSanction:null,gameOver:false,
     lastMath:"Ожидание первого Spin.",ledger:[],lastGridWins:[],
+    lastCallGuideAccepted:false,lastCallActive:null,lastCallBest:0,
     debtCycleStartDay:1, debtCycleLength:5, debtPaidEarly:false, freeRerolls:0, freeItemAvailable:false, freeItemClaimed:false, incomeTier:0
   };
 }
@@ -748,6 +798,141 @@ function spin(){
   render();
 }
 
+
+// Last Call: five reaction rounds. All credited income shares the normal daily cap.
+let lastCallTimer=null;
+let lastCallMode="safe";
+function lastCallStake(){return Math.max(1,Math.floor(dayCap()*0.05));}
+function showLastCallGuide(){
+  if(g.lastCallActive){toast("Заверши текущую игру, чтобы открыть правила.");return;}
+  const box=$("#lastCallGuide");if(!box)return;
+  $("#lastCallAgree").checked=false;
+  $("#lastCallGuideAccept").disabled=true;
+  box.classList.remove("hidden");
+}
+function closeLastCallGuide(accepted){
+  const box=$("#lastCallGuide");if(!box)return;
+  if(accepted){
+    if(!$("#lastCallAgree").checked){toast("Отметь, что ознакомился с правилами.");return;}
+    g.lastCallGuideAccepted=true;save();
+  }
+  box.classList.add("hidden");
+}
+function selectLastCallMode(mode){
+  if(g.lastCallActive){toast("Сначала заверши текущую игру.");return;}
+  lastCallMode=mode==="risk"?"risk":"safe";
+  $("#lastCallSafe").classList.toggle("selected",lastCallMode==="safe");
+  $("#lastCallRisk").classList.toggle("selected",lastCallMode==="risk");
+  $("#lastCallRiskLabel").textContent=`Ставка — ${fmt(lastCallStake())} 🪙 (5% лимита)`;
+}
+function lastCallSetSignal(message,kind=""){
+  const el=$("#lastCallSignal");if(!el)return;
+  el.className="lastCallSignal"+(kind?" "+kind:"");el.textContent=message;
+}
+function startLastCall(){
+  if(g.phase!=="day"){toast("«Последний звонок» доступен только днём.");return;}
+  if(g.earned>=dayCap()){toast("Дневной лимит уже достигнут.");return;}
+  if(g.lastCallActive){toast("Игра уже идёт.");return;}
+  if(!g.lastCallGuideAccepted){showLastCallGuide();return;}
+  const stake=lastCallMode==="risk"?lastCallStake():0;
+  if(stake&&g.cash<stake){toast(`Для риска нужно ${fmt(stake)} 🪙.`);return;}
+  if(stake)changeCash(-stake,"last call risk stake");
+  g.lastCallActive={round:0,hits:0,reward:0,stake,mode:lastCallMode,waiting:true,startedAt:Date.now()};
+  $("#lastCallStart").classList.add("hidden");
+  $("#lastCallHit").classList.remove("hidden");
+  $("#lastCallHit").disabled=true;
+  $("#lastCallSafe").disabled=true;$("#lastCallRisk").disabled=true;
+  text("lastCallRound","0/5");text("lastCallReward","0 🪙");
+  text("lastCallFeedback",stake?`Ставка ${fmt(stake)} 🪙 внесена. Дождись зелёного сигнала.`:"Сосредоточься. Жди зелёный сигнал.");
+  nextLastCallRound();
+  render();save();
+}
+function nextLastCallRound(){
+  if(!g.lastCallActive)return;
+  const a=g.lastCallActive;
+  if(a.round>=5){finishLastCall();return;}
+  a.waiting=true;a.signalAt=0;a.roundStartedAt=Date.now();
+  text("lastCallRound",`${a.round+1}/5`);
+  $("#lastCallHit").disabled=true;
+  lastCallSetSignal("ЖДИ…","");text("lastCallFeedback","Не нажимай, пока не появится зелёный сигнал.");
+  save();
+  clearTimeout(lastCallTimer);
+  lastCallTimer=setTimeout(()=>{
+    if(!g.lastCallActive)return;
+    a.waiting=false;a.signalAt=Date.now();
+    lastCallSetSignal("СЕЙЧАС!","ready");
+    $("#lastCallHit").disabled=false;
+    text("lastCallFeedback","Жми кнопку прямо сейчас!");
+    save();
+    lastCallTimer=setTimeout(()=>{
+      if(!g.lastCallActive||g.lastCallActive.waiting===true)return;
+      a.waiting=true;a.round++;text("lastCallFeedback","Слишком медленно — раунд пропущен.");
+      lastCallSetSignal("СИГНАЛ УШЁЛ","false");
+      setTimeout(()=>{if(g.lastCallActive){a.hits=Math.max(0,a.hits);nextLastCallRound();}},550);
+      save();
+    },1200);
+  },1800+Math.floor(Math.random()*1700));
+}
+function hitLastCall(){
+  const a=g.lastCallActive;if(!a)return;
+  if(a.waiting||!a.signalAt){
+    clearTimeout(lastCallTimer);a.round++;lastCallSetSignal("РАНО!","false");
+    text("lastCallFeedback","Слишком рано: этот раунд не засчитан.");
+    $("#lastCallHit").disabled=true;save();
+    lastCallTimer=setTimeout(nextLastCallRound,550);return;
+  }
+  clearTimeout(lastCallTimer);
+  const reaction=Date.now()-a.signalAt;
+  let pct=0,grade="";
+  if(reaction<=250){pct=0.03;grade="Идеально";}
+  else if(reaction<=450){pct=0.02;grade="Отлично";}
+  else if(reaction<=700){pct=0.01;grade="Успел";}
+  if(pct>0){a.hits++;a.reward+=Math.floor(dayCap()*pct);}
+  a.round++;a.waiting=true;a.signalAt=0;
+  lastCallSetSignal(`${reaction} мс · ${grade}`,reaction<=450?"ready":"");
+  text("lastCallReward",`${fmt(a.reward)} 🪙`);
+  text("lastCallFeedback",`Реакция: ${reaction} мс. Успешных раундов: ${a.hits}/5.`);
+  $("#lastCallHit").disabled=true;save();
+  lastCallTimer=setTimeout(nextLastCallRound,650);
+}
+function finishLastCall(){
+  const a=g.lastCallActive;if(!a)return;
+  clearTimeout(lastCallTimer);
+  const cap=dayCap(),room=Math.max(0,cap-g.earned);
+  const base=Math.min(room,a.reward);
+  if(base>0){changeCash(base,"last call skill income");g.earned+=base;}
+  let riskBonus=0;
+  if(a.stake>0){
+    if(a.hits>=4){
+      // Return the stake, then award up to the same amount as profit, subject to the daily cap.
+      changeCash(a.stake,"last call stake returned");
+      riskBonus=Math.min(Math.max(0,dayCap()-g.earned),a.stake);
+      if(riskBonus>0){changeCash(riskBonus,"last call risk bonus");g.earned+=riskBonus;}
+      text("lastCallFeedback",`Успех ${a.hits}/5! Ставка возвращена, бонус риска: ${fmt(riskBonus)} 🪙.`);
+    }else{
+      text("lastCallFeedback",`Риск не прошёл (${a.hits}/5). Ставка ${fmt(a.stake)} 🪙 потеряна.`);
+    }
+  }else text("lastCallFeedback",`Игра завершена: ${a.hits}/5 успешных раундов. Получено ${fmt(base)} 🪙.`);
+  g.lastCallBest=Math.max(Number(g.lastCallBest)||0,a.hits);
+  g.lastCallActive=null;
+  $("#lastCallStart").classList.remove("hidden");$("#lastCallHit").classList.add("hidden");
+  $("#lastCallSafe").disabled=false;$("#lastCallRisk").disabled=false;
+  $("#lastCallStart").textContent="↻ Сыграть ещё раз";
+  lastCallSetSignal("ИГРА ЗАВЕРШЕНА","");
+  text("lastCallRound",`5/5 · ${a.hits} успех.`);
+  text("lastCallReward",`${fmt(base+riskBonus)} 🪙`);
+  render();save();
+}
+function renderLastCall(){
+  text("lastCallRiskLabel",`Ставка — ${fmt(lastCallStake())} 🪙 (5% лимита)`);
+  const active=!!g.lastCallActive;
+  $("#lastCallStart").disabled=active||g.phase!=="day"||g.earned>=dayCap();
+  if(active){
+    $("#lastCallStart").classList.add("hidden");$("#lastCallHit").classList.remove("hidden");
+    $("#lastCallSafe").disabled=true;$("#lastCallRisk").disabled=true;
+  }
+}
+
 function render(){
   text("cash",fmt(g.cash)+" 🪙");text("dayStat",g.day);
   const cap=dayCap(),earned=Math.min(g.earned,cap),pct=cap>0?Math.min(100,earned/cap*100):0;
@@ -780,7 +965,7 @@ function render(){
       : "";
     rewardNotice.classList.toggle("hidden",!(g.freeRerolls>0||g.freeItemAvailable));
   }
-  renderMarket();renderInventory();renderGrid();updateViews();save();
+  renderMarket();renderInventory();renderGrid();renderLastCall();updateViews();save();
 }
 
 function updateViews(){
@@ -989,6 +1174,14 @@ function migrate(){
     for(const k of oldKeys)try{const old=JSON.parse(localStorage.getItem(k));if(old&&typeof old.cash==="number"){g={...fresh(),...old};break;}}catch{}
   }
   g={...fresh(),...g};
+  // A reload must never leave a paid stake or an active round stranded.
+  if(g.lastCallActive){
+    const interruptedStake=Math.max(0,Number(g.lastCallActive.stake)||0);
+    if(interruptedStake>0)changeCash(interruptedStake,"last call interrupted stake refund");
+    g.lastCallActive=null;
+  }
+  if(typeof g.lastCallGuideAccepted!=="boolean")g.lastCallGuideAccepted=false;
+  if(typeof g.lastCallBest!=="number")g.lastCallBest=0;
   if(g.shopPricingVersion!==1){
     g.shopPricingVersion=1;
     g.market=[];
@@ -1035,6 +1228,14 @@ function migrate(){
 function init(){
   migrate();
   $("#coinBtn")?.addEventListener("click",clickCoin);
+  $("#lastCallStart")?.addEventListener("click",startLastCall);
+  $("#lastCallHit")?.addEventListener("click",hitLastCall);
+  $("#lastCallInfo")?.addEventListener("click",showLastCallGuide);
+  $("#lastCallGuideClose")?.addEventListener("click",()=>closeLastCallGuide(false));
+  $("#lastCallGuideAccept")?.addEventListener("click",()=>{closeLastCallGuide(true);if(g.lastCallGuideAccepted)startLastCall();});
+  $("#lastCallAgree")?.addEventListener("change",e=>{$("#lastCallGuideAccept").disabled=!e.target.checked;});
+  $("#lastCallSafe")?.addEventListener("click",()=>selectLastCallMode("safe"));
+  $("#lastCallRisk")?.addEventListener("click",()=>selectLastCallMode("risk"));
   $("#goEvening")?.addEventListener("click",finishWork);
   $("#goNight")?.addEventListener("click",finishEvening);
   $("#finishNight")?.addEventListener("click",finishNight);
