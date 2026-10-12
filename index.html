@@ -1,0 +1,1410 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>THE HOUSE — Alpha 0.1.25</title>
+<style>
+:root{
+  --bg:#080b12;--panel:#111722;--panel2:#151c28;--line:#273247;--text:#f4f7fb;
+  --muted:#8e99aa;--accent:#7ce7b3;--gold:#ffd45c;--danger:#ff6678;--blue:#78a9ff;
+  --shadow:0 14px 40px rgba(0,0,0,.28);--r:20px;
+}
+*{box-sizing:border-box}html,body{margin:0;background:var(--bg);color:var(--text);font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,sans-serif}
+body{min-height:100vh;padding-bottom:88px}.app{max-width:760px;margin:auto}
+button{font:inherit;color:inherit;border:0;cursor:pointer}button:disabled{cursor:not-allowed;opacity:.45}
+.top{padding:22px 18px 12px;position:sticky;top:0;z-index:20;background:linear-gradient(var(--bg) 78%,transparent)}
+.brand{display:flex;align-items:center;justify-content:center;position:relative}.brand h1{font-size:22px;margin:0;letter-spacing:.4px;text-align:center}.brand .badge{position:absolute;right:0;top:50%;transform:translateY(-50%)}
+.badge{font-size:11px;color:var(--muted);display:flex;align-items:center;gap:7px}.dot{width:8px;height:8px;border-radius:50%;background:var(--accent);box-shadow:0 0 12px var(--accent)}
+.wallet{margin-top:8px;text-align:center;font-size:44px;font-weight:800;letter-spacing:-2px;padding:0 12px}.wallet span{font-size:25px;vertical-align:12px}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:12px}.stat{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:12px;text-align:center;min-height:72px}.stat b{font-size:19px}.stat small{display:block;color:var(--muted);margin-top:5px}
+.tabs{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;padding:10px 18px}.tab{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:10px 6px;color:var(--muted);font-weight:700}.tab.active{color:var(--text);border-color:#42516e;background:#182133}
+main{padding:4px 18px}.card{background:var(--panel);border:1px solid var(--line);border-radius:var(--r);padding:18px;box-shadow:var(--shadow);margin-bottom:14px}.title{font-size:20px;font-weight:800}.sub{color:var(--muted);line-height:1.45;margin-top:4px}.tiny{font-size:12px;color:var(--muted)}.row{display:flex;justify-content:space-between;align-items:center;gap:10px}.divider{height:1px;background:var(--line);margin:15px 0}
+.phase{display:inline-flex;gap:8px;align-items:center;padding:7px 10px;border-radius:999px;background:#192235;border:1px solid #33415b;font-size:12px;font-weight:800}.phase.day{color:#ffd46b}.phase.evening{color:#c7b3ff}.phase.night{color:#7db6ff}
+.coin{width:min(68vw,250px);height:min(68vw,250px);margin:24px auto;border-radius:50%;display:grid;place-items:center;background:radial-gradient(circle at 35% 30%,#ffe78a,#dba92d 55%,#8f6110);border:10px solid #5f4311;box-shadow:0 18px 55px rgba(255,202,64,.16),inset 0 0 0 5px rgba(255,255,255,.18);font-size:70px;user-select:none;touch-action:manipulation;transition:transform .07s}.coin:active{transform:scale(.95)}.tapgain{height:24px;text-align:center;color:var(--accent);font-weight:800}.bigbtn{width:100%;padding:16px;border-radius:15px;background:#1b2b44;border:1px solid #48668f;font-weight:850;font-size:18px}.goldbtn{background:#332b16;border-color:#705b22}.dangerbtn{background:#351a23;border-color:#713542}.ghost{background:#151d2a;border:1px solid var(--line);padding:10px 13px;border-radius:12px}.choices{display:grid;grid-template-columns:1fr 1fr;gap:10px}.choice{background:#141b27;border:1px solid var(--line);border-radius:15px;padding:13px;text-align:left}.choice.selected{border-color:var(--accent);box-shadow:0 0 0 1px rgba(124,231,179,.15)}.choice b{display:block}.choice small{display:block;color:var(--muted);margin-top:5px}
+.market{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}.item{background:#121925;border:1px solid var(--line);border-radius:16px;padding:13px;position:relative}.rarity{font-size:10px;text-transform:uppercase;color:var(--muted);letter-spacing:.7px}.icon{font-size:31px;margin:6px 0}.item h3{margin:0;font-size:15px}.item p{font-size:12px;color:var(--muted);line-height:1.4;min-height:49px}.price{font-weight:850;color:var(--gold)}.item button{width:100%;margin-top:9px;padding:10px;border-radius:11px;background:#1a2536;border:1px solid #34445e}.owned{font-size:11px;color:var(--accent);margin-top:8px}
+.inv{display:grid;grid-template-columns:repeat(3,1fr);gap:9px}.slot{min-height:105px;background:#0e141e;border:1px dashed #344057;border-radius:14px;padding:10px}.slot b{font-size:12px}.slot p{font-size:10px;color:var(--muted);margin:5px 0}.slot button{font-size:10px;background:#1b2433;padding:5px 7px;border-radius:8px}
+.machine{background:#0c1119;border:1px solid #2c394f;border-radius:20px;padding:14px}.grid{display:grid;grid-template-columns:repeat(5,1fr);gap:7px}.cell{aspect-ratio:1;border-radius:12px;background:#1a2230;border:1px solid #354157;display:grid;place-items:center;font-size:clamp(24px,8vw,48px);box-shadow:inset 0 -5px 0 rgba(0,0,0,.15)}.cell.hit{outline:3px solid var(--gold);box-shadow:0 0 18px rgba(255,212,92,.3)}.lines{display:flex;gap:7px;overflow:auto;margin-top:10px}.linepill{white-space:nowrap;background:#131b28;border:1px solid var(--line);border-radius:999px;padding:7px 10px;font-size:11px}.win{margin:12px 0;text-align:center;color:var(--accent);font-weight:850;min-height:23px}.math{background:#0d131d;border:1px solid var(--line);border-radius:15px;padding:13px;line-height:1.55}.math strong{color:var(--gold)}.math .positive{color:var(--accent)}.math .negative{color:var(--danger)}
+.progress{height:9px;background:#202838;border-radius:99px;overflow:hidden}.progress>i{display:block;height:100%;background:linear-gradient(90deg,#7ce7b3,#ffd45c,#ff6678);width:0}.heatrow{display:grid;grid-template-columns:1fr auto;gap:10px;align-items:center}.notice{padding:12px;border-radius:13px;background:#151e2c;border:1px solid var(--line);color:#cbd3df;font-size:12px;line-height:1.5}
+.bottom{position:fixed;bottom:0;left:0;right:0;background:#0c1018ee;backdrop-filter:blur(15px);border-top:1px solid #222b3b;padding:8px 12px calc(8px + env(safe-area-inset-bottom));z-index:30}.bottomnav{max-width:760px;margin:auto;display:grid;grid-template-columns:repeat(4,1fr);gap:6px}.navbtn{background:transparent;color:var(--muted);padding:7px 3px;border-radius:12px;font-size:11px}.navbtn.active{background:#192235;color:var(--text)}.navicon{display:block;font-size:22px;margin-bottom:2px}
+.toast{position:fixed;left:50%;bottom:90px;transform:translate(-50%,15px);background:#edf4ff;color:#101722;padding:11px 15px;border-radius:12px;font-weight:800;font-size:13px;opacity:0;pointer-events:none;transition:.2s;z-index:50;box-shadow:var(--shadow)}.toast.show{opacity:1;transform:translate(-50%,0)}
+.hidden{display:none!important}.locked{opacity:.35!important;filter:saturate(.5)}.danger{color:var(--danger)}.accent{color:var(--accent)}.gold{color:var(--gold)}
+/* Alpha 0.1.20 — Debt ×1.9 / 5-Day House */
+.debtOverlay{position:fixed;inset:0;background:rgba(3,6,11,.82);backdrop-filter:blur(8px);display:grid;place-items:center;padding:22px;z-index:100}
+.debtModal{width:min(100%,560px);background:var(--panel2);border:1px solid #713542;border-radius:24px;padding:28px 22px;box-shadow:0 24px 80px rgba(0,0,0,.55);text-align:center}
+.debtModal .skull{font-size:46px;margin-bottom:8px}.debtModal h2{margin:0;font-size:30px;letter-spacing:-.5px}.debtModal p{color:#cbd3df;line-height:1.55;margin:12px 0 20px}.debtModal .resetRun{width:100%;padding:15px;border-radius:14px;background:#351a23;border:1px solid #713542;font-weight:850;font-size:17px}
+@media(max-width:649px){.top{padding:14px 14px 8px}.wallet{font-size:40px}.stats{gap:7px}.stat{padding:10px 6px;min-height:68px}.stat b{font-size:18px}.stat small{font-size:10px}.tabs{padding:8px 14px}.tab{padding:9px 5px}main{padding:2px 14px}.card{padding:15px;border-radius:18px;margin-bottom:11px}.title{font-size:19px}.sub{font-size:14px}.coin{width:min(54vw,210px);height:min(54vw,210px);margin:18px auto;border-width:8px;font-size:58px}.bigbtn{padding:14px;font-size:16px}.marketItem,.invItem{padding:11px}.marketIcon{font-size:27px}.marketDesc{min-height:42px}.invItem{min-height:96px}}
+@media(min-width:650px){.market{grid-template-columns:repeat(3,1fr)}.choices{grid-template-columns:repeat(3,1fr)}}
+
+/* Alpha 0.1.6 UI + UX PATCH */
+.limitWrap{margin-top:8px}.limitBar{height:8px;border-radius:999px;background:#202a3b;overflow:hidden;margin-top:6px;border:1px solid #29364c}.limitBar>div{height:100%;width:0%;border-radius:999px;background:linear-gradient(90deg,#63e6b0,#ffd35a,#ff6f7d);transition:width .2s ease}.inventoryStats{display:flex;flex-direction:column;align-items:flex-end;gap:2px;font-size:12px;color:#cdd7e7}.movePerm{margin-top:8px;width:100%}.marketHeadNote{font-size:12px;color:var(--muted)}
+/* Alpha 0.1.4 FIX PACK */
+.marketItem,.invItem{background:#121925;border:1px solid var(--line);border-radius:16px;padding:13px;position:relative;min-width:0}
+.marketIcon{font-size:31px;margin:2px 0 6px}.marketName{font-size:15px;font-weight:800}.marketDesc{font-size:12px;color:var(--muted);line-height:1.4;min-height:48px;margin-top:5px}.marketFoot{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-top:9px}.marketFoot b{color:var(--gold);white-space:nowrap}.smallbtn{font:inherit;color:var(--text);background:#1a2536;border:1px solid #34445e;padding:9px 10px;border-radius:11px;font-size:12px}.trait{margin-top:7px;padding:7px 8px;border-radius:9px;background:#1a2030;color:#c8d5ea;font-size:11px;line-height:1.35}.daily{display:inline-block;margin-top:7px;padding:4px 7px;border-radius:999px;background:#332b16;color:var(--gold);font-size:10px;font-weight:800}.shopPriceMeta{margin-top:5px;font-size:10px;color:var(--muted);line-height:1.3}.invItem{min-height:105px}.invItem .tiny{margin-top:5px;line-height:1.35}.invItem .smallbtn{margin-top:8px;width:100%}.permanentSlot{border-style:solid;border-color:#4b648f;box-shadow:inset 0 0 0 1px rgba(120,169,255,.08)}
+.betChoices{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin-top:12px}.betChoice{background:#141b27;border:1px solid var(--line);border-radius:13px;padding:11px 8px;text-align:center}.betChoice b{display:block;font-size:15px}.betChoice small{display:block;color:var(--muted);font-size:10px;margin-top:3px}.betChoice.selected{border-color:var(--accent);background:#182a2a;box-shadow:0 0 0 1px rgba(124,231,179,.12)}
+.phaseLocked{opacity:.4}.tab.current{color:var(--text);border-color:#42516e;background:#182133}.tab.unlocked{color:var(--text)}
+@media(min-width:650px){.betChoices{grid-template-columns:repeat(4,1fr)}}
+
+/* Alpha 0.1.7 — Permanent Item Overhaul */
+.permBadge{display:inline-flex;align-items:center;gap:4px;margin-left:5px;padding:2px 6px;border-radius:999px;background:#18263a;border:1px solid #4b648f;color:#a9c9ff;font-size:10px;font-weight:800;vertical-align:middle}.permEffect{margin-top:7px;padding:7px 8px;border-radius:9px;background:#172236;border:1px solid #334b70;color:#b9d3f5;font-size:11px;line-height:1.35}.permLock{position:absolute;top:8px;right:8px;font-size:15px;filter:drop-shadow(0 2px 5px rgba(0,0,0,.35))}.permanentSlot{position:relative}
+
+/* Alpha 0.1.24 — Last Call mini-game */
+.lastCallCard{background:linear-gradient(145deg,#151d2b,#101620);border-color:#34445e}
+.lastCallStatus{display:flex;justify-content:space-between;gap:10px;align-items:center;margin:12px 0}
+.lastCallSignal{min-height:92px;border:1px solid #34445e;border-radius:16px;background:#0c121c;display:grid;place-items:center;text-align:center;padding:14px;font-weight:800;font-size:18px}
+.lastCallSignal.ready{border-color:#7ce7b3;background:#10241e;color:#7ce7b3}
+.lastCallSignal.false{border-color:#ff6678;background:#29151b;color:#ff9aa6}
+.lastCallGuide{position:fixed;inset:0;z-index:120;background:rgba(3,6,11,.86);backdrop-filter:blur(9px);display:grid;place-items:center;padding:18px}
+.lastCallGuideBox{width:min(100%,520px);max-height:88vh;overflow:auto;background:var(--panel2);border:1px solid #42516e;border-radius:22px;padding:22px;box-shadow:0 24px 80px rgba(0,0,0,.6)}
+.lastCallGuideBox h2{margin:0 0 8px;font-size:25px}.lastCallGuideBox li{margin:8px 0;color:#d1d9e6;line-height:1.45}
+.lastCallCheck{display:flex;gap:10px;align-items:flex-start;margin:18px 0;padding:12px;background:#0e141e;border:1px solid var(--line);border-radius:12px;line-height:1.4}
+.lastCallCheck input{width:20px;height:20px;accent-color:var(--accent);flex:0 0 auto;margin-top:1px}
+.lastCallActions{display:flex;gap:8px}.lastCallActions button{flex:1}
+
+</style>
+</head>
+<body>
+<div class="app">
+<header class="top">
+  <div class="brand"><h1>♣ THE HOUSE</h1><div class="badge"><i class="dot"></i> ALPHA 0.1.25</div></div>
+  <div style="display:flex;justify-content:flex-end;margin-top:8px"><button class="ghost" id="languageToggle" type="button">🌐 RU / EN</button></div>
+  <div class="wallet" id="cash">0 <span>🪙</span></div>
+  <div class="stats">
+    <div class="stat"><b id="dayStat">1</b><small>ДЕНЬ</small></div>
+    <div class="stat"><b id="heatStat">0%</b><small>НАГРЕВ / РИСК</small></div>
+    <div class="stat"><b id="debtStat">0</b><small>ДОЛГ</small></div>
+  </div>
+</header>
+
+<div class="tabs">
+  <button class="tab active" data-phase="day">☀️ День</button>
+  <button class="tab" data-phase="evening" disabled>🌆 Вечер</button>
+  <button class="tab" data-phase="night" disabled>🌙 Ночь</button>
+</div>
+
+<main>
+<section id="dayView">
+  <div class="card">
+    <div class="row"><div><span class="phase day">☀️ ФАЗА ДНЯ</span><div class="title" style="margin-top:10px">Заработок</div><div class="sub">Тапай по монете. Доход растёт вместе с днём.</div></div><div class="tiny">Лимит: <b id="dayCapText">600 🪙</b></div></div>
+    <button class="coin" id="coinBtn">🪙</button>
+    <div class="tapgain" id="tapGain"></div>
+    <div class="limitWrap"><div class="row"><span class="tiny">Прогресс лимита</span><b id="dayEarned">0 / 600 🪙</b></div><div class="limitBar"><div id="dayLimitBar"></div></div></div>
+  </div>
+  <div class="card lastCallCard" id="lastCallCard">
+    <div class="row">
+      <div><div class="title">⏱️ Последний звонок</div><div class="sub">Пять раундов на реакцию. Лови зелёный сигнал и зарабатывай без кликов по монете.</div></div>
+      <button class="ghost" id="lastCallInfo" aria-label="Правила Последнего звонка" title="Правила">ⓘ</button>
+    </div>
+    <div class="lastCallStatus"><span class="tiny">Раунд: <b id="lastCallRound">0/5</b></span><span class="tiny">Заработано: <b id="lastCallReward">0 🪙</b></span></div>
+    <div class="lastCallSignal" id="lastCallSignal">Нажми «Начать игру», когда будешь готов.</div>
+    <div class="notice" id="lastCallFeedback" style="margin-top:10px">Сигнал появится через случайный промежуток времени. Не нажимай слишком рано.</div>
+    <div class="choices" style="margin-top:10px">
+      <button class="choice selected" id="lastCallSafe"><b>🟢 Спокойно</b><small>Без ставки и риска</small></button>
+      <button class="choice" id="lastCallRisk"><b>🔥 Рискнуть</b><small id="lastCallRiskLabel">Ставка — 5% лимита</small></button>
+    </div>
+    <button class="bigbtn" id="lastCallStart" style="margin-top:12px">▶ Начать игру</button>
+    <button class="bigbtn hidden" id="lastCallHit" style="margin-top:12px">⚡ СИГНАЛ!</button>
+    <div class="tiny" style="margin-top:9px">Награда учитывается в общем дневном лимите заработка. Максимум базовой награды — 15% лимита за игру.</div>
+  </div>
+  <div class="card" id="eventCard">
+    <div class="row"><div class="title">🎲 Событие дня</div><span class="tiny" id="eventStatus">—</span></div>
+    <div class="notice" id="eventBox" style="margin-top:10px">Сегодня тихо. House пока ничего не обещает.</div>
+  </div>
+  <div class="card">
+    <div class="title">📈 Экономика дня</div>
+    <div class="sub">Дневной лимит растёт на 15% в день. Множитель дохода влияет на заработок, а не на размер лимита.</div>
+    <div class="math" style="margin-top:12px">
+      <div>День <strong id="mathDay">1</strong> → глобальный income <strong id="mathScale">×1.00</strong></div>
+      <div class="tiny">База клика: <b id="baseClickText">10</b> 🪙. Дневной лимит: <b id="mathCap">600</b> 🪙.</div>
+    </div>
+  </div>
+  <button class="bigbtn goldbtn" id="goEvening" style="margin:4px 0 16px">🌆 Завершить рабочий день → открыть рынок</button>
+</section>
+
+<section id="eveningView" class="hidden">
+  <div class="card">
+    <div><span class="phase evening">🌆 ФАЗА ВЕЧЕРА</span><div class="title" style="margin-top:10px">Чёрный рынок</div><div class="sub">6 уникальных предметов + шанс на 1 постоянный слот. Цена зависит от состояния твоего кошелька при входе в вечер.</div></div>
+    <div class="market" id="market" style="margin-top:14px"></div>
+    <div class="row" style="margin-top:12px"><button class="ghost" id="reroll">🔄 Заменить рынок · <b id="rerollCost">50</b> 🪙</button><span class="tiny">Замены: <b id="rerolls">0</b></span></div><div class="notice" id="debtRewardNotice" style="margin-top:10px"></div>
+  </div>
+  <div class="card">
+    <div class="row"><div class="title">🎒 Инвентарь</div><div class="inventoryStats"><b id="tempCount">Временные — 0/6</b><b id="permCount">Постоянные — 0/2</b></div></div>
+    <div class="sub">Временные артефакты живут весь долговой цикл и сгорают после его погашения. Постоянные сохраняются. В permanent-слоте зарядные эффекты ослабляются и не расходуют заряды.</div>
+    <div class="inv" id="inventory" style="margin-top:12px"></div>
+    <div class="notice" style="margin-top:12px"><b>🔒 Что меняется в permanent</b><br><span class="tiny">Постоянный слот не сохраняет прежнюю силу временного предмета: эффект становится слабее и действует постоянно. Заряды у предметов больше не списываются.</span><div id="permanentRulesList" style="margin-top:8px"></div></div>
+    <button class="bigbtn" id="goNight" style="margin-top:12px">🌙 Завершить вечер → открыть ночь</button>
+  </div>
+</section>
+
+<section id="nightView" class="hidden">
+  <div class="card">
+    <div class="row"><div><span class="phase night">🌙 ФАЗА НОЧИ</span><div class="title" style="margin-top:10px">THE HOUSE</div><div class="sub">Ставка всегда составляет 30% от текущего баланса. Размер сетки не меняется.</div></div><div style="text-align:right"><div class="tiny">NIGHT</div><b id="nightSpins">0/8</b></div></div>
+    <div class="tiny" style="margin-top:13px">СТАВКА</div><div class="betChoices" id="betChoices">
+      <button class="betChoice active" data-bet="0.30"><b>30%</b><small id="bet30">0 🪙</small></button>
+    </div>
+    <div class="machine" style="margin-top:12px"><div class="grid" id="grid"></div><div class="lines" id="linePills"></div></div>
+    <div class="win" id="winText">Сделай крутку. Каждая выигрышная линия оплачивается отдельно.</div>
+    <button class="bigbtn" id="spinBtn">🎰 КРУТИТЬ · 5 🪙</button>
+    <div class="divider"></div>
+    <div class="heatrow"><span class="tiny">НАГРЕВ / РИСК</span><b id="heatText">0%</b></div>
+    <div class="progress" style="margin-top:7px"><i id="heatBar"></i></div>
+  </div>
+
+  <div class="card">
+    <div class="title">🧮 Математика спина</div>
+    <div class="sub">Здесь всегда видна последняя проверка поля. Только математика последнего Spin — без журнала старых результатов.</div>
+    <div class="math" id="mathBox" style="margin-top:12px">Ожидание первого Spin.</div>
+  </div>
+
+  <div class="card">
+    <div class="title">💀 Долг House</div>
+    <div class="sub">Долг — реальная часть экономики. Текущий долг не растёт, пока ты его не погасил. После полной оплаты следующий долг увеличивается в 1,9 раза. На погашение текущего долга даётся 5 дней. На 5-й день без полной оплаты забег заканчивается.</div>
+    <div class="math" style="margin-top:12px">
+      <div>Осталось погасить: <strong id="debtBig">0 🪙</strong></div>
+      <div>База долгового цикла: <strong id="debtDue">0 🪙</strong></div>
+      <div>Дней без оплаты: <strong id="debtMissed">0/5</strong></div>
+      <div class="tiny" style="margin-top:6px">После полного погашения долг увеличивается в 1,9 раза. Пока текущий долг не погашен, он не растёт. Артефакты могут уменьшать сегодняшнюю нагрузку.</div>
+    </div>
+    <button class="bigbtn dangerbtn" id="repayBtn" style="margin-top:10px">💸 Погасить долг</button>
+  </div>
+
+  <div class="card">
+    <div class="title">📜 Правила Alpha 0.1.20</div>
+    <div class="notice" style="margin-top:10px">
+      <b>Сетка всегда 5×3.</b> Оплачиваются 3 горизонтальные и 5 вертикальных линий. 3/4/5 одинаковых подряд в одной линии дают выплату. Каждая линия считается отдельно; одна и та же сетка не может случайно создать выплату без реальной комбинации. Диагонали пока не входят в Alpha 0.1.1. Дополнительные комбинации не заменяют друг друга: каждая валидная линия платит отдельно.
+    </div>
+  </div>
+  <button class="bigbtn" id="finishNight">🌅 Закончить ночь → новый день</button>
+</section>
+
+<section id="stashView" class="hidden">
+  <div class="card"><div class="title" data-i18n="stashTitle">🎒 Полка артефактов</div><div class="sub" data-i18n="stashSub">Твой текущий билд и заряды.</div><div class="inv" id="stashInventory" style="margin-top:12px"></div></div>
+  <div class="card" id="ticketExchangeCard">
+    <div class="row"><div><div class="title" data-i18n="exchangeTitle">🎟️ Обменник House</div><div class="sub" data-i18n="exchangeSub">Тикеты и постоянный прогресс сохраняются между забегами.</div></div><div style="text-align:right"><div class="tiny" data-i18n="ticketsLabel">ТИКЕТЫ</div><b class="gold" id="ticketBalance">0</b></div></div>
+    <div class="notice" style="margin-top:12px"><span data-i18n="exchangeRate">Курс: 25 000 монет = 1 тикет</span><br><span data-i18n="currentCashLabel">Текущий баланс</span>: <b id="exchangeCash">0</b> 🪙</div>
+    <button class="bigbtn goldbtn" id="buyTicket" style="margin-top:10px">Обменять 25 000 🪙 на 1 тикет</button>
+    <div class="tiny" style="margin-top:8px" data-i18n="ticketRule">Тикеты не теряются при проигрыше. Они списываются только при покупке.</div>
+  </div>
+  <div class="card" id="skillTreeCard">
+    <div class="title" data-i18n="skillTreeTitle">🌳 Дерево навыков</div><div class="sub" data-i18n="skillTreeSub">Постоянные улучшения. Уровни сохраняются между забегами.</div>
+    <div class="item" style="margin-top:12px"><div class="row"><div><div class="marketName" data-i18n="skillFingers">⚡ Быстрые пальцы</div><div class="marketDesc" data-i18n="skillFingersDesc">+1 монета к каждому тапу за уровень.</div></div><b id="skillFingersLevel">0/10</b></div><div class="marketFoot"><span class="tiny" id="skillFingersCost">Цена: 3 тикета</span><button class="smallbtn" id="buySkillFingers">Улучшить</button></div></div>
+    <div class="item" style="margin-top:10px"><div class="row"><div><div class="marketName" data-i18n="skillCapital">🏦 Расширенная касса</div><div class="marketDesc" data-i18n="skillCapitalDesc">+5% к дневному лимиту за уровень.</div></div><b id="skillCapitalLevel">0/5</b></div><div class="marketFoot"><span class="tiny" id="skillCapitalCost">Цена: 5 тикетов</span><button class="smallbtn" id="buySkillCapital">Улучшить</button></div></div>
+  </div>
+  <div class="card" id="blackjackCard">
+    <div class="row"><div><div class="title" data-i18n="blackjackTitle">🂡 Блэкджек</div><div class="sub" data-i18n="blackjackSub">Постоянная разблокировка за 25 тикетов. Ставка — 10% баланса; победа возвращает 2× ставку, ничья возвращает ставку. При 0 монетах доступен тренировочный режим без выплат.</div></div><b id="blackjackStatus" class="gold">🔒 25 🎟️</b></div>
+    <div id="blackjackLocked" class="notice" style="margin-top:12px" data-i18n="blackjackLocked">Накопи 25 тикетов, чтобы навсегда открыть блэкджек.</div>
+    <div id="blackjackPlay" class="hidden" style="margin-top:12px"><div class="notice" id="blackjackTable">Нажми «Новая раздача», чтобы начать.</div><div class="choices" style="margin-top:10px"><button class="bigbtn" id="blackjackStart">Новая раздача</button><button class="ghost" id="blackjackHit" disabled>Ещё карту</button><button class="ghost" id="blackjackStand" disabled>Хватит</button></div></div>
+    <button class="bigbtn goldbtn" id="unlockBlackjack" style="margin-top:12px">Открыть блэкджек · 25 🎟️</button>
+  </div>
+</section>
+
+</main>
+</div>
+
+<nav class="bottom"><div class="bottomnav">
+  <button class="navbtn active" data-nav="day"><span class="navicon">☀️</span>ЦИКЛ</button>
+  <button class="navbtn" data-nav="evening"><span class="navicon">🛒</span>РЫНОК</button>
+  <button class="navbtn" data-nav="night"><span class="navicon">🎰</span>HOUSE</button>
+  <button class="navbtn" data-nav="stash"><span class="navicon">🎒</span>БИЛД</button>
+</div></nav>
+<div class="debtOverlay hidden" id="debtOverlay" role="dialog" aria-modal="true">
+  <div class="debtModal">
+    <div class="skull">🏛️</div>
+    <h2>THE HOUSE разочарован вами</h2>
+    <p>Пять дней без погашения долга — слишком много. Приходите снова, но уже с деньгами.</p>
+    <button class="resetRun" id="resetRun">Начать заново с первого дня</button>
+  </div>
+</div>
+<div class="lastCallGuide hidden" id="lastCallGuide" role="dialog" aria-modal="true" aria-labelledby="lastCallGuideTitle">
+  <div class="lastCallGuideBox">
+    <div class="tiny">THE HOUSE · МИНИ-ИГРА</div>
+    <h2 id="lastCallGuideTitle">⏱️ Последний звонок</h2>
+    <div class="sub">Проверь реакцию: не спеши — дождись сигнала.</div>
+    <ol>
+      <li>В игре будет <b>5 раундов</b>. Сначала экран покажет ожидание — в это время кнопку нажимать нельзя.</li>
+      <li>Когда появится зелёный сигнал <b>«СЕЙЧАС!»</b>, нажми кнопку как можно быстрее. Раннее нажатие считается ошибкой.</li>
+      <li>Чем быстрее реакция, тем выше награда: до <b>3% дневного лимита за раунд</b>. Максимальная базовая награда — 15% лимита.</li>
+      <li><b>Спокойно:</b> без ставки. <b>Рискнуть:</b> ставка равна 5% дневного лимита; при 4–5 успешных раундах ставка возвращается и даёт такую же сумму дополнительного дохода. При меньшем результате ставка теряется.</li>
+      <li>Награда мини-игры входит в общий дневной лимит вместе с заработком за монету. Игра недоступна вне дневной фазы или после исчерпания лимита.</li>
+    </ol>
+    <label class="lastCallCheck"><input type="checkbox" id="lastCallAgree"><span>Я ознакомился с правилами игры.</span></label>
+    <div class="lastCallActions">
+      <button class="ghost" id="lastCallGuideClose">Закрыть</button>
+      <button class="bigbtn" id="lastCallGuideAccept" disabled>Понятно, играть</button>
+    </div>
+  </div>
+</div>
+<div class="toast" id="toast"></div>
+
+<script>
+(() => {
+"use strict";
+
+const $ = s => document.querySelector(s);
+const $$ = s => [...document.querySelectorAll(s)];
+const SAVE_KEY = "the_house_alpha015";
+const CLICK_GAINS = [10,25,50,85,110,140,175,215,260,310];
+
+const SYMBOLS = [
+  {s:"🍋",name:"Лимон",base:2.0,weight:25},{s:"🍒",name:"Вишня",base:2.2,weight:20},
+  {s:"🍊",name:"Апельсин",base:2.4,weight:17},{s:"🍇",name:"Виноград",base:2.7,weight:14},
+  {s:"🔔",name:"Колокол",base:3.0,weight:11},{s:"♣️",name:"Клевер",base:3.5,weight:8},
+  {s:"7️⃣",name:"Семёрка",base:4.0,weight:4},{s:"💎",name:"Алмаз",base:7.0,weight:1}
+];
+
+const TRAITS = [
+  ["ФИНАЛ","+6% к финальному множителю","final",0.06],
+  ["УДАЧА","+3% к шансу редких символов","luck",0.03],
+  ["ДОЛГ","−12% к сегодняшнему долгу","debt",0.12],
+  ["РАЗГОН","+7% к начальному множителю","initial",0.07],
+  ["ДЖЕКПОТ","+5% к шансу ДЖЕКПОТ","jackpot",0.05]
+];
+
+const ITEM_POOL = [
+  ["🍒 Вишнёвый магнит","Комбинации с 🍒: +18% к выплате",160,"cherry",0.18],
+  ["💎 Стеклянный глаз","Шанс 💎: +10%",180,"luck",0.10],
+  ["🛡️ Долговой щит","Сегодняшний долг: −12%",220,"debt",0.12],
+  ["🔥 Красная кнопка","При Heat 70+: выплаты +25%",250,"heat",0.25],
+  ["🎰 Заряженный барабан","Следующие 4 крутки: +18% к шансу длинных линий",280,"streak",0.18,4],
+  ["🪙 Рабочие перчатки","Доход от клика +25%",300,"work",0.25],
+  ["🧯 Страховка","Следующие 3 проигрыша: возврат 20% ставки",320,"insurance",0.20,3],
+  ["👁️ Зеркало","Вертикальные комбинации: +20%",350,"vertical",0.20],
+  ["🃏 Двойная удача","Каждая 3-я крутка: случайная выигрышная линия +35%",380,"random",0.35],
+  ["📦 Тяжёлый кошелёк","Лимит безопасного кэша +500; сверх лимита при переходе дня теряется 10%",420,"safe",500],
+  ["🧨 Долговой кредит","+300 монет сейчас, долг +35%",500,"loan",0.35],
+  ["♣️ Клеверный контракт","Комбинации ♣️: +25%",450,"clover",0.25]
+];
+
+const PERMANENT_RULES = {
+  // Only these four items change behavior in a permanent slot.
+  streak:    {value:0.11, text:"Permanent: каждый Spin +11% к шансу длинной линии; заряды не расходуются"},
+  insurance: {value:0.08, text:"Permanent: каждый полный проигрыш возвращает 8% ставки; заряды не расходуются"},
+  random:    {value:0.15, text:"Permanent: каждый 5-й Spin усиливает найденную линию на +15%; зарядов нет"},
+  work:      {value:0.20, cap:0.25, text:"Permanent: +20% к монете за клик и +25% к дневному лимиту"}
+};
+
+function isPermanentItem(item){
+  if(!item)return false;
+  return g.permanent.slice(0,g.permanentUnlocked).some(x=>x===item);
+}
+function permanentRule(item){return item?PERMANENT_RULES[item.type]||null:null;}
+function effectiveBonus(type){
+  let total=0;
+  g.inventory.forEach(i=>{if(i?.type===type)total+=Number(i.value)||0;});
+  g.permanent.slice(0,g.permanentUnlocked).filter(Boolean).forEach(i=>{
+    if(i.type!==type)return;
+    const r=permanentRule(i);
+    // Items without a permanent override keep their original effect.
+    total+=Number(r ? r.value : i.value)||0;
+  });
+  return total;
+}
+function effectiveTraitBonus(type){return traitBonus(type);}
+function permanentText(item){return permanentRule(item)?.text||item?.desc||"Permanent: обычный эффект.";}
+function canBecomePermanent(item){return !!item && item.kind!=="permanentSlot" && item.type!=="loan";}
+
+const EVENTS = [
+  ["Сверхурочные","+35% к доходу за клик","work",1.35],
+  ["Удачная смена","Лимит дня +50%","cap",1.50],
+  ["Щедрый стол","Выплаты казино +18% сегодня","casino",1.18],
+  ["Тяжёлая смена","Доход за клик −20%","work",0.80]
+];
+
+const BETS=[0.30];
+
+// Meta-progression lives outside the run save: Game Over and resetRun() cannot erase it.
+const META_KEY = "the_house_meta_v1";
+const TICKET_RATE = 25000;
+const BLACKJACK_COST = 25;
+let meta;
+try { meta = JSON.parse(localStorage.getItem(META_KEY)) || null; } catch { meta = null; }
+const tgLanguage = String(window.Telegram?.WebApp?.initDataUnsafe?.user?.language_code || navigator.language || "ru").toLowerCase();
+if (!meta || typeof meta !== "object") {
+  meta = {tickets:0, blackjackUnlocked:false, skills:{fingers:0,capital:0}, language:tgLanguage.startsWith("en")?"en":"ru", languageChosen:false};
+}
+meta.tickets=Math.max(0,Math.floor(Number(meta.tickets)||0));
+meta.skills={fingers:0,capital:0,...(meta.skills||{})};
+meta.skills.fingers=Math.max(0,Math.min(10,Math.floor(Number(meta.skills.fingers)||0)));
+meta.skills.capital=Math.max(0,Math.min(5,Math.floor(Number(meta.skills.capital)||0)));
+if(meta.language!=="en"&&meta.language!=="ru")meta.language=tgLanguage.startsWith("en")?"en":"ru";
+if(typeof meta.blackjackUnlocked!=="boolean")meta.blackjackUnlocked=false;
+if(typeof meta.languageChosen!=="boolean")meta.languageChosen=false;
+function saveMeta(){localStorage.setItem(META_KEY,JSON.stringify(meta));}
+const DICT = {
+"🎒 Полка артефактов":"🎒 Artifact Shelf","Твой текущий билд и заряды.":"Your current build and charges.","🎟️ Обменник House":"🎟️ House Exchange","Тикеты и постоянный прогресс сохраняются между забегами.":"Tickets and permanent progress carry over between runs.","ТИКЕТЫ":"TICKETS","Курс: 25 000 монет = 1 тикет":"Rate: 25,000 coins = 1 ticket","Текущий баланс":"Current balance","Обменять 25 000 🪙 на 1 тикет":"Exchange 25,000 🪙 for 1 ticket","Тикеты не теряются при проигрыше. Они списываются только при покупке.":"Tickets survive losses and are only spent on purchases.","🌳 Дерево навыков":"🌳 Skill Tree","Постоянные улучшения. Уровни сохраняются между забегами.":"Permanent upgrades. Levels persist between runs.","⚡ Быстрые пальцы":"⚡ Quick Fingers","+1 монета к каждому тапу за уровень.":"+1 coin per tap per level.","🏦 Расширенная касса":"🏦 Expanded Cash Desk","+5% к дневному лимиту за уровень.":"+5% to the daily cap per level.","Цена: 3 тикета":"Cost: 3 tickets","Цена: 5 тикетов":"Cost: 5 tickets","Улучшить":"Upgrade","🌐 RU / EN":"🌐 RU / EN","🂡 Блэкджек":"🂡 Blackjack","Постоянная разблокировка за 25 тикетов. Ставка — 10% баланса; победа возвращает 2× ставку, ничья возвращает ставку. При 0 монетах доступен тренировочный режим без выплат.":"Permanent unlock for 25 tickets. The stake is 10% of your balance; a win pays 2× the stake, and a push returns it. At 0 coins, practice mode is available without payouts.","Постоянная разблокировка за 25 тикетов.":"Permanent unlock for 25 tickets.","Накопи 25 тикетов, чтобы навсегда открыть блэкджек.":"Collect 25 tickets to permanently unlock Blackjack.","Открыть блэкджек · 25 🎟️":"Unlock Blackjack · 25 🎟️","ОТКРЫТО НАВСЕГДА":"PERMANENTLY UNLOCKED","Нажми «Новая раздача», чтобы начать.":"Press “New Hand” to start.","Новая раздача":"New Hand","Ещё карту":"Hit","Хватит":"Stand","Победа! Выплата 2× ставки.":"You win! Payout: 2× the stake.","Тренировочная раздача завершена — денежной выплаты нет.":"Practice hand complete — no cash payout.","Проигрыш. Ставка потеряна.":"You lose. The stake is lost.","Ничья. Ставка возвращена.":"Push. The stake is returned.","Тренировочная раздача — без денежных выплат.":"Practice hand — no money is paid out.","Дилер":"Dealer","Ты":"You","Максимум":"Max level","Недостаточно монет для обмена.":"Not enough coins to exchange.","Получен 1 тикет. Тикеты сохраняются между забегами.":"1 ticket received. Tickets persist between runs.","Навык уже прокачан до максимума.":"This skill is already at maximum level.","Недостаточно тикетов.":"Not enough tickets.","Постоянный навык улучшен.":"Permanent skill upgraded.","Нужно 25 тикетов для разблокировки.":"25 tickets are required to unlock this.","Блэкджек открыт навсегда!":"Blackjack permanently unlocked!",
+"ЦИКЛ":"DAY","РЫНОК":"MARKET","БИЛД":"BUILD","🌆 Вечер":"🌆 Evening","🌙 Ночь":"🌙 Night","☀️ ФАЗА ДНЯ":"☀️ DAY PHASE","Заработок":"Earnings","Тапай по монете. Доход растёт вместе с днём.":"Tap the coin. Income grows as days pass.","Лимит:":"Cap:","Прогресс лимита":"Cap progress","⏱️ Последний звонок":"⏱️ Last Call","Пять раундов на реакцию. Лови зелёный сигнал и зарабатывай без кликов по монете.":"Five reaction rounds. Hit the green signal to earn without tapping the coin.","Раунд:":"Round:","Заработано:":"Earned:","🟢 Спокойно":"🟢 Safe","Без ставки и риска":"No stake or risk","🔥 Рискнуть":"🔥 Risk","▶ Начать игру":"▶ Start game","⚡ СИГНАЛ!":"⚡ NOW!","🎲 Событие дня":"🎲 Daily event","Сегодня тихо. House пока ничего не обещает.":"A quiet day. House makes no promises yet.","📈 Экономика дня":"📈 Daily economy","Дневной лимит растёт на 15% в день. Множитель дохода влияет на заработок, а не на размер лимита.":"The daily cap grows by 15% per day. The income multiplier affects earnings, not the cap.","База клика:":"Base tap:","Дневной лимит:":"Daily cap:","🌆 Завершить рабочий день → открыть рынок":"🌆 Finish workday → open market","🌆 ФАЗА ВЕЧЕРА":"🌆 EVENING PHASE","Чёрный рынок":"Black Market","6 уникальных предметов + шанс на 1 постоянный слот. Цена зависит от состояния твоего кошелька при входе в вечер.":"6 unique items + a chance for 1 permanent slot. Prices depend on your wallet when evening begins.","🔄 Заменить рынок ·":"🔄 Reroll market ·","Замены:":"Rerolls:","🎒 Инвентарь":"🎒 Inventory","Временные артефакты живут весь долговой цикл и сгорают после его погашения. Постоянные сохраняются. В permanent-слоте зарядные эффекты ослабляются и не расходуют заряды.":"Temporary artifacts last for the debt cycle and expire when it is paid. Permanent artifacts persist. Charge-based effects are weaker in permanent slots and do not consume charges.","🔒 Что меняется в permanent":"🔒 Permanent slot rules","Постоянный слот не сохраняет прежнюю силу временного предмета: эффект становится слабее и действует постоянно. Заряды у предметов больше не списываются.":"A permanent slot weakens an item's temporary effect but makes it permanent. Item charges are no longer consumed.","🌙 Завершить вечер → открыть ночь":"🌙 Finish evening → open night","🌙 ФАЗА НОЧИ":"🌙 NIGHT PHASE","Ставка всегда составляет 30% от текущего баланса. Размер сетки не меняется.":"The stake is always 30% of the current balance. Grid size never changes.","СТАВКА":"STAKE","Сделай крутку. Каждая выигрышная линия оплачивается отдельно.":"Spin. Each winning line pays separately.","🎰 КРУТИТЬ":"🎰 SPIN","НАГРЕВ / РИСК":"HEAT / RISK","🧮 Математика спина":"🧮 Spin math","Здесь всегда видна последняя проверка поля. Только математика последнего Spin — без журнала старых результатов.":"The latest grid check appears here. Only the most recent spin is shown.","Ожидание первого Spin.":"Waiting for the first spin.","💀 Долг House":"💀 House Debt","Осталось погасить:":"Remaining debt:","База долгового цикла:":"Debt cycle base:","Дней без оплаты:":"Days unpaid:","💸 Погасить долг":"💸 Repay debt","📜 Правила Alpha 0.1.20":"📜 Alpha 0.1.20 Rules","🌅 Закончить ночь → новый день":"🌅 End night → new day","THE HOUSE разочарован вами":"THE HOUSE is disappointed","Начать заново с первого дня":"Start a new run","Нажми «Начать игру», когда будешь готов.":"Press “Start Game” when ready.","Сигнал появится через случайный промежуток времени. Не нажимай слишком рано.":"The signal appears after a random delay. Do not press too early.","Понятно, играть":"Got it, play","Закрыть":"Close","Я ознакомился с правилами игры.":"I have read the rules.",
+"Сверхурочные":"Overtime","Удачная смена":"Lucky Shift","Щедрый стол":"Generous Table","Тяжёлая смена":"Hard Shift","+35% к доходу за клик":"+35% click income","Лимит дня +50%":"Daily cap +50%","Выплаты казино +18% сегодня":"Casino payouts +18% today","Доход за клик −20%":"Click income −20%",
+"🍒 Вишнёвый магнит":"🍒 Cherry Magnet","💎 Стеклянный глаз":"💎 Glass Eye","🛡️ Долговой щит":"🛡️ Debt Shield","🔥 Красная кнопка":"🔥 Red Button","🎰 Заряженный барабан":"🎰 Loaded Reel","🪙 Рабочие перчатки":"🪙 Work Gloves","🧯 Страховка":"🧯 Insurance","👁️ Зеркало":"👁️ Mirror","🃏 Двойная удача":"🃏 Double Luck","📦 Тяжёлый кошелёк":"📦 Heavy Wallet","🧨 Долговой кредит":"🧨 Debt Loan","♣️ Клеверный контракт":"♣️ Clover Contract",
+"Монеты зарабатываются только днём.":"Coins can only be earned during the day.","Дневной лимит достигнут.":"Daily cap reached.","Сначала закончи рабочий день.":"Finish the workday first.","Из ночи нельзя вернуться на рынок.":"You cannot return to the market from night.","Ночь откроется после вечера.":"Night opens after evening.","День начнётся после завершения ночи.":"The day starts after the night ends.","Долг уже оплачен.":"Debt is already paid.","Нет денег для оплаты.":"Not enough money to pay.","Инвентарь заполнен: 6/6.":"Inventory full: 6/6.","Бесплатный предмет уже использован.":"The free item has already been claimed.","Долговой кредит нельзя получить бесплатно.":"The debt loan cannot be claimed for free.","Предмет получен бесплатно. Его свойства сохранены.":"Item claimed for free. Its properties are preserved.","Рынок обновлён.":"Market refreshed.","Новый забег начался. Удачи.":"A new run has started. Good luck.","Новый день. Сначала работа.":"New day. Start with work.","Пропуск рабочего дня. Сразу ночь.":"Workday skipped. Straight to night.","Пять дней без погашения долга — слишком много. Приходите снова, но уже с деньгами.":"Five days without repaying the debt is too much. Come back with money.","Долг — реальная часть экономики. Текущий долг не растёт, пока ты его не погасил. После полной оплаты следующий долг увеличивается в 1,9 раза. На погашение текущего долга даётся 5 дней. На 5-й день без полной оплаты забег заканчивается.":"Debt is a core part of the economy. It does not grow until paid. After full repayment, the next debt increases by 1.9×. You have 5 days to repay the current debt. The run ends if it is not fully paid by day 5.","После полного погашения долг увеличивается в 1,9 раза. Пока текущий долг не погашен, он не растёт. Артефакты могут уменьшать сегодняшнюю нагрузку.":"After full repayment, debt increases by 1.9×. The current debt does not grow while unpaid. Artifacts may reduce today's burden.","Сетка всегда 5×3. Оплачиваются 3 горизонтальные и 5 вертикальных линий. 3/4/5 одинаковых подряд в одной линии дают выплату. Каждая линия считается отдельно; одна и та же сетка не может случайно создать выплату без реальной комбинации. Диагонали пока не входят в Alpha 0.1.1. Дополнительные комбинации не заменяют друг друга: каждая валидная линия платит отдельно.":"The grid is always 5×3. Three horizontal and five vertical lines can pay out. Three, four, or five matching symbols in a line pay a reward. Each line is evaluated separately. Diagonals are not included in this version; every valid line pays independently.","База долгового цикла: ":"Debt cycle base: ","Осталось погасить: ":"Remaining debt: ","Зеркало":"Mirror","Красная кнопка":"Red Button","Двойная удача":"Double Luck","Клеверный контракт":"Clover Contract","Долговой щит":"Debt Shield","Вишнёвый магнит":"Cherry Magnet","Рабочие перчатки":"Work Gloves","Стеклянный глаз":"Glass Eye","Заряженный барабан":"Loaded Reel","Страховка":"Insurance","Тяжёлый кошелёк":"Heavy Wallet","Долговой кредит":"Debt Loan","Купить":"Buy","Открыть":"Unlock","⭐ ТОВАР ДНЯ":"⭐ ITEM OF THE DAY","Рабочий день закончен. Рынок открыт.":"Workday finished. Market is open.","Ночь началась. House ждёт.":"Night has begun. House is waiting.","Сетка всегда 5×3.":"The grid is always 5×3."," Оплачиваются 3 горизонтальные и 5 вертикальных линий. ":" Three horizontal and five vertical lines can pay out. "," 3/4/5 одинаковых подряд в одной линии дают выплату. ":" Three, four, or five matching symbols in a line pay out. "," Каждая линия считается отдельно; одна и та же сетка не может случайно создать выплату без реальной комбинации. ":" Each line is evaluated separately; a payout requires a valid combination. "," Диагонали пока не входят в Alpha 0.1.1. Дополнительные комбинации не заменяют друг друга: каждая валидная линия платит отдельно.":" Diagonals are not included in this version. Every valid line pays independently.","Награда учитывается в общем дневном лимите заработка. ":"Rewards count toward the daily income cap. ","Награда учитывается в общем дневном лимите заработка.":"Rewards count toward the daily income cap.","Множитель дохода влияет на заработок, а не на размер лимита.":"The income multiplier affects earnings, not the cap.","Множитель дохода влияет на заработок":"The income multiplier affects earnings","Лимит дня +50%":"Daily cap +50%","Постоянный слот":"Permanent slot","Постоянный":"Permanent","Пусто":"Empty","Замены: ":"Rerolls: ","Ночь началась. House ждёт.":"Night has begun. House is waiting.","Долг не погашен. Осталось дней: ":"Debt unpaid. Days remaining: ","Долг закрыт. Временные предметы сгорели — начался новый цикл.":"Debt cleared. Temporary items expired — a new cycle has begun.","Погашено ":"Repaid ","Долг не погашен. Осталось дней: ":"Debt unpaid. Days remaining: ",
+"ДЕНЬ":"DAY","ДОЛГ":"DEBT","☀️ День":"☀️ Day","🌆 Вечер":"🌆 Evening","🌙 Ночь":"🌙 Night","Временные — ":"Temporary — ","Постоянные — ":"Permanent — ","🔒 Постоянный слот не открыт":"🔒 Permanent slot locked","Рынок откроется после завершения рабочего дня.":"The market opens after the workday ends.","Награда учитывается в общем дневном лимите заработка. Максимум базовой награды — 15% лимита за игру.":"Rewards count toward the daily income cap. Maximum base reward: 15% of the cap per game.","Максимум базовой награды — 15% лимита за игру.":"Maximum base reward: 15% of the cap per game.","День ":"Day "," → глобальный income ":" → global income ","АКТИВНО":"ACTIVE","База цикла: ":"Cycle base: ","Долг — реальная часть экономики. Текущий долг не растёт, пока ты его не погасил. После полной оплаты следующий долг увеличивается в 1,9 раза. На погашение текущего долга даётся 5 дней. На 5-й день без полной оплаты забег заканчивается.":"Debt is a core part of the economy. It does not grow until paid. After full repayment, the next debt increases by 1.9×. You have 5 days to repay the current debt. The run ends if it is not fully paid by day 5.","После полного погашения долг увеличивается в 1,9 раза. Пока текущий долг не погашен, он не растёт. Артефакты могут уменьшать сегодняшнюю нагрузку.":"After full repayment, debt increases by 1.9×. The current debt does not grow while unpaid. Artifacts may reduce today's burden.","Сетка всегда 5×3. Оплачиваются 3 горизонтальные и 5 вертикальных линий. 3/4/5 одинаковых подряд в одной линии дают выплату. Каждая линия считается отдельно; одна и та же сетка не может случайно создать выплату без реальной комбинации. Диагонали пока не входят в Alpha 0.1.1. Дополнительные комбинации не заменяют друг друга: каждая валидная линия платит отдельно.":"The grid is always 5×3. Three horizontal and five vertical lines can pay out. Three, four, or five matching symbols in a line pay a reward. Each line is evaluated separately. Diagonals are not included in this version; every valid line pays independently.","База долгового цикла: ":"Debt cycle base: ",
+"Ставка — ":"Stake — "," (5% лимита)":" (5% of cap)","Сигнал появится через случайный промежуток времени. Не нажимай слишком рано.":"The signal appears after a random delay. Do not press too early.","Не нажимай, пока не появится зелёный сигнал.":"Do not press until the green signal appears.","Жми кнопку прямо сейчас!":"Press the button now!","Слишком медленно — раунд пропущен.":"Too slow — round skipped.","Заверши текущую игру, чтобы открыть правила.":"Finish the current game to view the rules.","Отметь, что ознакомился с правилами.":"Confirm that you have read the rules.","Сначала заверши текущую игру.":"Finish the current game first.","Игра уже идёт.":"The game is already in progress.","Для риска нужно ":"Risk mode requires ","Ставка ":"Stake "," внесена. Дождись зелёного сигнала.":" placed. Wait for the green signal.","Сосредоточься. Жди зелёный сигнал.":"Focus. Wait for the green signal.","ЖДИ…":"WAIT…","СЕЙЧАС!":"NOW!","СИГНАЛ УШЁЛ":"SIGNAL MISSED",
+"Комбинаций нет.":"No winning combinations.","Найдено линий: ":"Winning lines: ","Итого: ":"Total: ","Баланс после Spin: ":"Balance after spin: ","HEAT: ":"HEAT: "," · ставка 30%":" · 30% stake","Ставка: ":"Stake: ","Permanent: каждый Spin +11% к шансу длинной линии; заряды не расходуются":"Permanent: +11% chance of a long line on each spin; no charges consumed","Permanent: каждый полный проигрыш возвращает 8% ставки; заряды не расходуются":"Permanent: each total loss refunds 8% of the stake; no charges consumed","Permanent: каждый 5-й Spin усиливает найденную линию на +15%; зарядов нет":"Permanent: every 5th spin boosts a winning line by +15%; no charges","Permanent: +20% к монете за клик и +25% к дневному лимиту":"Permanent: +20% coin income per tap and +25% daily cap",
+"Комбинации с 🍒: +18% к выплате":"Cherry combinations: +18% payout","Шанс 💎: +10%":"💎 chance: +10%","Сегодняшний долг: −12%":"Today's debt: −12%","При Heat 70+: выплаты +25%":"Payouts +25% at Heat 70+","Следующие 4 крутки: +18% к шансу длинных линий":"Next 4 spins: +18% chance of long lines","Доход от клика +25%":"Click income +25%","Следующие 3 проигрыша: возврат 20% ставки":"Next 3 losses: refund 20% of the stake","Вертикальные комбинации: +20%":"Vertical combinations: +20%","Каждая 3-я крутка: случайная выигрышная линия +35%":"Every 3rd spin: random winning line +35%","Лимит безопасного кэша +500; сверх лимита при переходе дня теряется 10%":"Safe cash limit +500; 10% above the limit is lost at day transition","+300 монет сейчас, долг +35%":"+300 coins now, debt +35%","Комбинации ♣️: +25%":"♣️ combinations: +25%",
+"ФИНАЛ":"FINISH","УДАЧА":"LUCK","ДОЛГ":"DEBT","РАЗГОН":"RAMP-UP","ДЖЕКПОТ":"JACKPOT","+6% к финальному множителю":"+6% final multiplier","+3% к шансу редких символов":"+3% chance of rare symbols","−12% к сегодняшнему долгу":"−12% today's debt","+7% к начальному множителю":"+7% initial multiplier","+5% к шансу ДЖЕКПОТ":"+5% jackpot chance",
+"Осталось дней: ":"Days remaining: ","Долг не погашен. Осталось дней: ":"Debt unpaid. Days remaining: ","Долг закрыт. Временные предметы сгорели — начался новый цикл.":"Debt cleared. Temporary items expired — a new cycle has begun.","Долг не погашен. Осталось дней: ":"Debt unpaid. Days remaining: ","Оплачено ":"Paid ","Бесплатная замена рынка. Осталось: ":"Free market reroll. Remaining: ","Недостаточно монет для замены.":"Not enough coins to reroll.","Бесплатных замен: ":"Free rerolls: ","Бесплатный предмет: ":"Free item: ","доступен":"available"
+,
+"Сверхурочные":"Overtime","Удачная смена":"Lucky Shift","Щедрый стол":"Generous Table","Тяжёлая смена":"Hard Shift","+35% к доходу за клик":"+35% click income","Лимит дня +50%":"Daily cap +50%","Выплаты казино +18% сегодня":"Casino payouts +18% today","Доход за клик −20%":"Click income −20%",
+"🍒 Вишнёвый магнит":"🍒 Cherry Magnet","💎 Стеклянный глаз":"💎 Glass Eye","🛡️ Долговой щит":"🛡️ Debt Shield","🔥 Красная кнопка":"🔥 Red Button","🎰 Заряженный барабан":"🎰 Loaded Reel","🪙 Рабочие перчатки":"🪙 Work Gloves","🧯 Страховка":"🧯 Insurance","👁️ Зеркало":"👁️ Mirror","🃏 Двойная удача":"🃏 Double Luck","📦 Тяжёлый кошелёк":"📦 Heavy Wallet","🧨 Долговой кредит":"🧨 Debt Loan","♣️ Клеверный контракт":"♣️ Clover Contract",
+"Недостаточно монет для обмена.":"Not enough coins to exchange.","Монеты зарабатываются только днём.":"Coins can only be earned during the day.","Дневной лимит достигнут.":"Daily cap reached.","Сначала закончи рабочий день.":"Finish the workday first.","Из ночи нельзя вернуться на рынок.":"You cannot return to the market from night.","Ночь откроется после вечера.":"Night opens after evening.","День начнётся после завершения ночи.":"The day starts after the night ends.","Долг уже оплачен.":"Debt is already paid.","Нет денег для оплаты.":"Not enough money to pay.","Инвентарь заполнен: 6/6.":"Inventory full: 6/6.","Бесплатный предмет уже использован.":"The free item has already been claimed.","Долговой кредит нельзя получить бесплатно.":"The debt loan cannot be claimed for free.","Предмет получен бесплатно. Его свойства сохранены.":"Item claimed for free. Its properties are preserved.","Рынок обновлён.":"Market refreshed.","Новый забег начался. Удачи.":"A new run has started. Good luck.","Оплачено ":"Paid ","Ставка: ":"Stake: ","Новый день. Сначала работа.":"New day. Start with work.","Пропуск рабочего дня. Сразу ночь.":"Workday skipped. Straight to night.","Предмет получен бесплатно. Его свойства сохранены.":"Item claimed for free. Its properties are preserved.","Пять дней без погашения долга — слишком много. Приходите снова, но уже с деньгами.":"Five days without repaying the debt is too much. Come back with money.","Долг — реальная часть экономики. Текущий долг не растёт, пока ты его не погасил. После полной оплаты следующий долг увеличивается в 1,9 раза. На погашение текущего долга даётся 5 дней. На 5-й день без полной оплаты забег заканчивается.":"Debt is a core part of the economy. It does not grow until paid. After full repayment, the next debt increases by 1.9×. You have 5 days to repay the current debt. The run ends if it is not fully paid by day 5.","После полного погашения долг увеличивается в 1,9 раза. Пока текущий долг не погашен, он не растёт. Артефакты могут уменьшать сегодняшнюю нагрузку.":"After full repayment, debt increases by 1.9×. The current debt does not grow while unpaid. Artifacts may reduce today's burden.","Сетка всегда 5×3. Оплачиваются 3 горизонтальные и 5 вертикальных линий. 3/4/5 одинаковых подряд в одной линии дают выплату. Каждая линия считается отдельно; одна и та же сетка не может случайно создать выплату без реальной комбинации. Диагонали пока не входят в Alpha 0.1.1. Дополнительные комбинации не заменяют друг друга: каждая валидная линия платит отдельно.":"The grid is always 5×3. Three horizontal and five vertical lines can pay out. Three, four, or five matching symbols in a line pay a reward. Each line is evaluated separately. Diagonals are not included in this version; every valid line pays independently.","База долгового цикла: ":"Debt cycle base: ","Осталось погасить: ":"Remaining debt: ","Зеркало":"Mirror","Красная кнопка":"Red Button","Двойная удача":"Double Luck","Клеверный контракт":"Clover Contract","Долговой щит":"Debt Shield","Вишнёвый магнит":"Cherry Magnet","Рабочие перчатки":"Work Gloves","Стеклянный глаз":"Glass Eye","Заряженный барабан":"Loaded Reel","Страховка":"Insurance","Тяжёлый кошелёк":"Heavy Wallet","Долговой кредит":"Debt Loan","Купить":"Buy","Открыть":"Unlock","⭐ ТОВАР ДНЯ":"⭐ ITEM OF THE DAY","Рабочий день закончен. Рынок открыт.":"Workday finished. Market is open.","Ночь началась. House ждёт.":"Night has begun. House is waiting.","Сетка всегда 5×3.":"The grid is always 5×3."," Оплачиваются 3 горизонтальные и 5 вертикальных линий. ":" Three horizontal and five vertical lines can pay out. "," 3/4/5 одинаковых подряд в одной линии дают выплату. ":" Three, four, or five matching symbols in a line pay out. "," Каждая линия считается отдельно; одна и та же сетка не может случайно создать выплату без реальной комбинации. ":" Each line is evaluated separately; a payout requires a valid combination. "," Диагонали пока не входят в Alpha 0.1.1. Дополнительные комбинации не заменяют друг друга: каждая валидная линия платит отдельно.":" Diagonals are not included in this version. Every valid line pays independently.","Награда учитывается в общем дневном лимите заработка. ":"Rewards count toward the daily income cap. ","Награда учитывается в общем дневном лимите заработка.":"Rewards count toward the daily income cap.","Множитель дохода влияет на заработок, а не на размер лимита.":"The income multiplier affects earnings, not the cap.","Множитель дохода влияет на заработок":"The income multiplier affects earnings","Лимит дня +50%":"Daily cap +50%","Постоянный слот":"Permanent slot","Постоянный":"Permanent","Пусто":"Empty","Замены: ":"Rerolls: ","Ночь началась. House ждёт.":"Night has begun. House is waiting.","Долг не погашен. Осталось дней: ":"Debt unpaid. Days remaining: ","Долг закрыт. Временные предметы сгорели — начался новый цикл.":"Debt cleared. Temporary items expired — a new cycle has begun.","Погашено ":"Repaid ","Долг не погашен. Осталось дней: ":"Debt unpaid. Days remaining: ",
+"ДЕНЬ":"DAY","ДОЛГ":"DEBT","☀️ День":"☀️ Day","🌆 Вечер":"🌆 Evening","🌙 Ночь":"🌙 Night","Временные — ":"Temporary — ","Постоянные — ":"Permanent — ","🔒 Постоянный слот не открыт":"🔒 Permanent slot locked","Рынок откроется после завершения рабочего дня.":"The market opens after the workday ends.","Награда учитывается в общем дневном лимите заработка. Максимум базовой награды — 15% лимита за игру.":"Rewards count toward the daily income cap. Maximum base reward: 15% of the cap per game.","Максимум базовой награды — 15% лимита за игру.":"Maximum base reward: 15% of the cap per game.","День ":"Day "," → глобальный income ":" → global income ","АКТИВНО":"ACTIVE","База цикла: ":"Cycle base: ","Долг — реальная часть экономики. Текущий долг не растёт, пока ты его не погасил. После полной оплаты следующий долг увеличивается в 1,9 раза. На погашение текущего долга даётся 5 дней. На 5-й день без полной оплаты забег заканчивается.":"Debt is a core part of the economy. It does not grow until paid. After full repayment, the next debt increases by 1.9×. You have 5 days to repay the current debt. The run ends if it is not fully paid by day 5.","После полного погашения долг увеличивается в 1,9 раза. Пока текущий долг не погашен, он не растёт. Артефакты могут уменьшать сегодняшнюю нагрузку.":"After full repayment, debt increases by 1.9×. The current debt does not grow while unpaid. Artifacts may reduce today's burden.","Сетка всегда 5×3. Оплачиваются 3 горизонтальные и 5 вертикальных линий. 3/4/5 одинаковых подряд в одной линии дают выплату. Каждая линия считается отдельно; одна и та же сетка не может случайно создать выплату без реальной комбинации. Диагонали пока не входят в Alpha 0.1.1. Дополнительные комбинации не заменяют друг друга: каждая валидная линия платит отдельно.":"The grid is always 5×3. Three horizontal and five vertical lines can pay out. Three, four, or five matching symbols in a line pay a reward. Each line is evaluated separately. Diagonals are not included in this version; every valid line pays independently.","База долгового цикла: ":"Debt cycle base: ",
+"Ставка — ":"Stake — "," (5% лимита)":" (5% of cap)","Сигнал появится через случайный промежуток времени. Не нажимай слишком рано.":"The signal appears after a random delay. Do not press too early.","Не нажимай, пока не появится зелёный сигнал.":"Do not press until the green signal appears.","Жми кнопку прямо сейчас!":"Press the button now!","Слишком медленно — раунд пропущен.":"Too slow — round skipped.","Заверши текущую игру, чтобы открыть правила.":"Finish the current game to view the rules.","Отметь, что ознакомился с правилами.":"Confirm that you have read the rules.","Сначала заверши текущую игру.":"Finish the current game first.","Игра уже идёт.":"The game is already in progress.","Для риска нужно ":"Risk mode requires ","Ставка ":"Stake "," внесена. Дождись зелёного сигнала.":" placed. Wait for the green signal.","Сосредоточься. Жди зелёный сигнал.":"Focus. Wait for the green signal.","ЖДИ…":"WAIT…","СЕЙЧАС!":"NOW!","СИГНАЛ УШЁЛ":"SIGNAL MISSED",
+"Комбинаций нет.":"No winning combinations.","Найдено линий: ":"Winning lines: ","Итого: ":"Total: ","Баланс после Spin: ":"Balance after spin: ","HEAT: ":"HEAT: "," · ставка 30%":" · 30% stake","Ставка: ":"Stake: ","Permanent: каждый Spin +11% к шансу длинной линии; заряды не расходуются":"Permanent: +11% chance of a long line on each spin; no charges consumed","Permanent: каждый полный проигрыш возвращает 8% ставки; заряды не расходуются":"Permanent: each total loss refunds 8% of the stake; no charges consumed","Permanent: каждый 5-й Spin усиливает найденную линию на +15%; зарядов нет":"Permanent: every 5th spin boosts a winning line by +15%; no charges","Permanent: +20% к монете за клик и +25% к дневному лимиту":"Permanent: +20% coin income per tap and +25% daily cap",
+"Комбинации с 🍒: +18% к выплате":"Cherry combinations: +18% payout","Шанс 💎: +10%":"💎 chance: +10%","Сегодняшний долг: −12%":"Today's debt: −12%","При Heat 70+: выплаты +25%":"Payouts +25% at Heat 70+","Следующие 4 крутки: +18% к шансу длинных линий":"Next 4 spins: +18% chance of long lines","Доход от клика +25%":"Click income +25%","Следующие 3 проигрыша: возврат 20% ставки":"Next 3 losses: refund 20% of the stake","Вертикальные комбинации: +20%":"Vertical combinations: +20%","Каждая 3-я крутка: случайная выигрышная линия +35%":"Every 3rd spin: random winning line +35%","Лимит безопасного кэша +500; сверх лимита при переходе дня теряется 10%":"Safe cash limit +500; 10% above the limit is lost at day transition","+300 монет сейчас, долг +35%":"+300 coins now, debt +35%","Комбинации ♣️: +25%":"♣️ combinations: +25%",
+"ФИНАЛ":"FINISH","УДАЧА":"LUCK","ДОЛГ":"DEBT","РАЗГОН":"RAMP-UP","ДЖЕКПОТ":"JACKPOT","+6% к финальному множителю":"+6% final multiplier","+3% к шансу редких символов":"+3% chance of rare symbols","−12% к сегодняшнему долгу":"−12% today's debt","+7% к начальному множителю":"+7% initial multiplier","+5% к шансу ДЖЕКПОТ":"+5% jackpot chance",
+"Осталось дней: ":"Days remaining: ","Долг не погашен. Осталось дней: ":"Debt unpaid. Days remaining: ","Долг закрыт. Временные предметы сгорели — начался новый цикл.":"Debt cleared. Temporary items expired — a new cycle has begun.","Долг не погашен. Осталось дней: ":"Debt unpaid. Days remaining: ","Оплачено ":"Paid ","Бесплатная замена рынка. Осталось: ":"Free market reroll. Remaining: ","Недостаточно монет для замены.":"Not enough coins to reroll.","Бесплатных замен: ":"Free rerolls: ","Бесплатный предмет: ":"Free item: ","доступен":"available"
+
+};
+const REPLACEMENTS = Object.entries(DICT).sort((a,b)=>b[0].length-a[0].length);
+function tr(value){let out=String(value??"");if(meta.language!=="en")return out;for(const [ru,en] of REPLACEMENTS)out=out.split(ru).join(en);out=out.replace(/Открывает постоянный слот (\d+)\. Слот останется навсегда\. Цена зависит от дня\./g,"Unlocks permanent slot $1. The slot stays forever. Price depends on the day.").replace(/Оплачено ([\d, .]+) 🪙/g,"Paid $1 🪙").replace(/База: ([\d, .]+) · надбавка рынка: \+([\d, .]+)/g,"Base: $1 · market surcharge: +$2").replace(/скидка (\d+)%/g,"$1% discount").replace(/Долг не погашен\. Осталось дней: (\d+)\./g,"Debt unpaid. Days remaining: $1.").replace(/Новый день\. Сначала работа\./g,"New day. Start with work.").replace(/Долг закрыт\. Временные предметы сгорели — начался новый цикл\./g,"Debt cleared. Temporary items expired — a new cycle has begun.");return out;}
+function localizeDom(){
+  document.documentElement.lang=meta.language;
+  const walker=document.createTreeWalker(document.body,NodeFilter.SHOW_TEXT);const nodes=[];while(walker.nextNode())nodes.push(walker.currentNode);
+  for(const n of nodes){if(!n.nodeValue.trim())continue;if(n.__houseRuText===undefined)n.__houseRuText=n.nodeValue;n.nodeValue=meta.language==="en"?tr(n.__houseRuText):n.__houseRuText;}
+  for(const el of document.querySelectorAll('[title],[aria-label]')){if(el.dataset.houseRuTitle===undefined&&el.title)el.dataset.houseRuTitle=el.title;if(el.dataset.houseRuAria===undefined&&el.getAttribute('aria-label'))el.dataset.houseRuAria=el.getAttribute('aria-label');if(el.dataset.houseRuTitle)el.title=meta.language==="en"?tr(el.dataset.houseRuTitle):el.dataset.houseRuTitle;if(el.dataset.houseRuAria)el.setAttribute('aria-label',meta.language==="en"?tr(el.dataset.houseRuAria):el.dataset.houseRuAria);}
+  const langButton=$("#languageToggle");if(langButton)langButton.textContent=meta.language==="en"?"🌐 English / RU":"🌐 RU / EN";
+}
+function setLanguage(lang){meta.language=lang;meta.languageChosen=true;saveMeta();document.documentElement.lang=lang;render();}
+
+function fresh(){
+  return {
+    version:9,day:1,cash:100,safe:0,earned:0,heat:0,
+    debt:1500,due:1500,missed:0,phase:"day",market:[],inventory:[],
+    permanent:[null,null],permanentUnlocked:0,permanentOfferedToday:false,rerolls:0,event:null,spins:0,betIndex:0,shopBalanceSnapshot:null,shopScale:null,shopPricingVersion:1,
+    grid:[],lastWin:"Сделай крутку. Каждая выигрышная линия оплачивается отдельно.",debtSanction:null,gameOver:false,
+    lastMath:"Ожидание первого Spin.",ledger:[],lastGridWins:[],
+    lastCallGuideAccepted:false,lastCallActive:null,lastCallBest:0,
+    debtCycleStartDay:1, debtCycleLength:5, debtPaidEarly:false, debtCleared:false, stashOpen:false, freeRerolls:0, freeItemAvailable:false, freeItemClaimed:false, incomeTier:0
+  };
+}
+
+let g;
+try { g=JSON.parse(localStorage.getItem(SAVE_KEY))||fresh(); } catch { g=fresh(); }
+const actionLock={};
+function once(key,fn,ms=300){
+  const now=Date.now();
+  if((actionLock[key]||0)>now)return false;
+  actionLock[key]=now+ms; fn(); return true;
+}
+
+function save(){localStorage.setItem(SAVE_KEY,JSON.stringify(g));}
+function fmt(n){return Math.floor(Number(n)||0).toLocaleString(meta.language==="en"?"en-US":"ru-RU");}
+function text(id,v){const el=document.getElementById(id);if(el)el.textContent=v;}
+function toast(msg){const el=$("#toast");if(!el)return;el.textContent=tr(msg);el.classList.add("show");clearTimeout(toast.timer);toast.timer=setTimeout(()=>el.classList.remove("show"),2200);}
+
+function activeItems(){return [...g.inventory,...g.permanent.slice(0,g.permanentUnlocked).filter(i=>i && !i.slot && i.kind!=="permanentSlot")].filter(Boolean);}
+function bonus(type){return effectiveBonus(type);}
+function traitBonus(type){
+  let total=0;
+  g.inventory.forEach(i=>{if(i?.trait?.type===type)total+=Number(i.trait.v)||0;});
+  g.permanent.slice(0,g.permanentUnlocked).filter(Boolean).forEach(i=>{
+    if(i?.trait?.type===type)total+=(Number(i.trait.v)||0)*0.5;
+  });
+  return total;
+}
+function hasОсобенность(type){return traitBonus(type)>0;}
+
+function changeCash(delta,reason){
+  delta=Number(delta)||0;
+  const before=g.cash;
+  g.cash=Math.max(0,before+delta);
+  const actual=g.cash-before;
+  if(Math.abs(actual)>0.0001){
+    g.ledger=(g.ledger||[]).slice(-39);
+    g.ledger.push({day:g.day,phase:g.phase,before,after:g.cash,delta:actual,reason,ts:Date.now()});
+  }
+  return actual;
+}
+
+function debtForDay(day){
+  return Math.max(1500, Number(g.debt)||1500);
+}
+function debtReduction(){
+  return Math.min(0.90,effectiveBonus("debt")+traitBonus("debt"));
+}
+function currentDebt(){
+  const total=Math.max(0,Number(g.debt||1500));
+  if(total<=0)return 0;
+  return Math.min(total,Math.max(50,Math.ceil(total*(1-debtReduction()))));
+}
+function scheduledDebtForNewDay(newDay){
+  // The next debt is created only after the current debt has been fully paid.
+  const current=Math.max(1500,Number(g.debt)||1500);
+  return g.debtCleared ? Math.max(1500,Math.ceil(current*1.9)) : current;
+}
+function debtSanctionLevel(){return 0;}
+function nightSpinLimit(){return 8;}
+function debtSanctionText(){return "";}
+function applyDebtSanctionForNewDay(){g.debtSanction=null;return null;}
+
+function nightSpinLimit(){return 8;}
+function debtSanctionText(){return "";}
+function applyDebtSanctionForNewDay(){g.debtSanction=null;return null;}
+function showGameOver(){
+  g.gameOver=true;save();
+  const ov=$("#debtOverlay");if(ov)ov.classList.remove("hidden");
+}
+function resetRun(){
+  localStorage.removeItem(SAVE_KEY);
+  g=fresh();
+  const ov=$("#debtOverlay");if(ov)ov.classList.add("hidden");
+  toast("Новый забег начался. Удачи.");
+  render();
+}
+
+function dayCap(){
+  // Income ceiling advances when a debt cycle is successfully completed:
+  // 300 -> 600 -> 1000 -> 1500 -> 2100 -> ...
+  const caps=[300,600,1000,1500,2100,2900,3900,5200];
+  const tier=Math.max(0,Number(g.incomeTier)||0);
+  let v;
+  if(tier<caps.length) v=caps[tier];
+  else v=Math.floor(caps[caps.length-1]*Math.pow(1.30,tier-caps.length+1));
+
+  v=Math.floor(v*(1+0.05*meta.skills.capital));
+  const permWork=g.permanent.slice(0,g.permanentUnlocked).find(i=>i?.type==="work");
+  if(permWork)v*=1+Number(PERMANENT_RULES.work.cap||0);
+  if(g.event?.[2]==="cap")v*=g.event[3];
+  if(g.event?.[2]==="debtWork")v*=g.event[3];
+  return Math.floor(v);
+}
+
+function shopScaleForDay(day){
+  const d=Math.max(1,Number(day)||1);
+  if(d<=2)return 0.25;
+  if(d===3)return 0.24;
+  if(d===4)return 0.23;
+  if(d===5)return 0.22;
+  if(d===6)return 0.21;
+  if(d<=8)return 0.20;
+  if(d===9)return 0.19;
+  if(d===10)return 0.18;
+  if(d<=12)return 0.18;
+  if(d<=14)return 0.16;
+  return 0.15;
+}
+function shopSnapshot(){
+  // Цена магазина фиксирует баланс в момент окончания рабочего дня.
+  // Рероллы рынка не меняют эту базу.
+  if(g.shopBalanceSnapshot==null){
+    g.shopBalanceSnapshot=Math.max(0,Number(g.cash)||0);
+  }
+  return Math.max(0,Number(g.shopBalanceSnapshot)||0);
+}
+function shopSurcharge(){
+  return Math.floor(shopSnapshot()*(Number(g.shopScale)||shopScaleForDay(g.day)));
+}
+function marketBasePrice(item){return Math.max(1,Number(item?.price)||0);}
+function marketFinalPrice(item){
+  const raw=marketBasePrice(item)+shopSurcharge();
+  const discount=item?.daily ? Number(item.discount||0) : 0;
+  return Math.max(marketBasePrice(item),Math.floor(raw*(1-discount/100)));
+}
+
+function rerollCost(){
+  const base=Math.max(10,Math.ceil(dayCap()*0.02));
+  return Math.max(10,Math.ceil(base*Math.pow(1.5,g.rerolls)));
+}
+function baseClickGain(){
+  const tier=Math.max(0,Number(g.incomeTier)||0);
+  if(tier<CLICK_GAINS.length)return CLICK_GAINS[tier];
+  return Math.floor(CLICK_GAINS[CLICK_GAINS.length-1]+(tier-CLICK_GAINS.length+1)*50);
+}
+function clickGain(){
+  let v=(baseClickGain()+meta.skills.fingers)*(1+bonus("work"));
+  if(g.event?.[2]==="work"||g.event?.[2]==="debtWork")v*=g.event[3];
+  return v;
+}
+function safeLimit(){return 1000+effectiveBonus("safe");}
+
+function betAmount(index=0){
+  return Math.max(1,Math.floor(g.cash*0.30));
+}
+function selectBet(i){g.betIndex=0;render();}
+
+function setPhase(phase){
+  if(!["day","market","night"].includes(phase))return;
+  g.phase=phase;render();
+}
+
+function uuid(){
+  return (globalThis.crypto?.randomUUID?.()||`${Date.now()}-${Math.random().toString(36).slice(2)}`);
+}
+
+function makeItem(daily=false){
+  const x=ITEM_POOL[Math.floor(Math.random()*ITEM_POOL.length)];
+  const tr=Math.random()<(daily?0.20:0.05)?(()=>{const t=TRAITS[Math.floor(Math.random()*TRAITS.length)];return{name:t[0],desc:t[1],type:t[2],v:t[3]};})():null;
+  return {id:uuid(),name:x[0],desc:x[1],price:x[2],type:x[3],value:x[4],trait:tr,daily,sale:x[2],
+    charges:x[5]||null,duration:null};
+}
+
+function permanentSlotPrice(slotIndex){
+  return Math.min(1800, Math.floor(700 + (g.day-1)*70 + slotIndex*350));
+}
+
+function buildMarket(){
+  const pool=[...ITEM_POOL],items=[];
+  // The evening snapshot is created once and deliberately survives rerolls.
+  if(g.shopBalanceSnapshot==null)g.shopBalanceSnapshot=Math.max(0,g.cash);
+  if(g.shopScale==null)g.shopScale=shopScaleForDay(g.day);
+
+  // Six unique artifacts.
+  while(items.length<6 && pool.length){
+    const x=pool.splice(Math.floor(Math.random()*pool.length),1)[0];
+    items.push({
+      id:uuid(),name:x[0],desc:x[1],price:x[2],type:x[3],value:x[4],
+      trait:null,daily:false,discount:0,sale:x[2],charges:x[5]||null,duration:null
+    });
+  }
+
+  // One random item of the day. Its discount is calculated from the same
+  // evening snapshot, so reroll never changes the wealth surcharge itself.
+  const dailyIdx=Math.floor(Math.random()*items.length);
+  items.forEach((i,idx)=>{
+    i.daily=idx===dailyIdx;
+    const chance=i.daily?0.20:0.05;
+    if(Math.random()<chance){
+      const t=TRAITS[Math.floor(Math.random()*TRAITS.length)];
+      i.trait={name:t[0],desc:t[1],type:t[2],v:t[3]};
+    }
+    i.discount=i.daily ? Math.floor(5+Math.random()*31) : 0;
+    i.sale=marketFinalPrice(i);
+  });
+
+  // Permanent slots remain a separate capital purchase and do not use
+  // dynamic artifact pricing.
+  if(g.permanentUnlocked<2 && !g.permanentOfferedToday && Math.random()<0.45){
+    const slot=g.permanentUnlocked;
+    const price=permanentSlotPrice(slot);
+    items.push({
+      id:uuid(),
+      kind:"permanentSlot",
+      slotIndex:slot,
+      name:`🔓 Permanent Slot ${slot+1}`,
+      desc:`Открывает постоянный слот ${slot+1}. Слот останется навсегда. Цена зависит от дня.`,
+      price,
+      sale:price,
+      daily:false
+    });
+  }
+
+  g.market=items;
+}
+
+function marketIcon(name){return name.split(" ")[0];}
+function renderMarket(){
+  const el=$("#market");if(!el)return;el.innerHTML="";
+  if(!g.market.length){el.innerHTML='<div class="notice">Рынок откроется после завершения рабочего дня.</div>';return;}
+  g.market.forEach(item=>{
+    const card=document.createElement("div");card.className="marketItem";
+    const isFreeOffer=g.freeItemAvailable&&!g.freeItemClaimed&&item.kind!=="permanentSlot"&&item.type!=="loan";
+    const disabled=item.kind==="permanentSlot"
+      ? g.permanentUnlocked>=2||g.cash<item.sale
+      : (isFreeOffer ? (g.inventory.length>=6) : (g.cash<item.sale||(g.inventory.length>=6&&item.type!=="loan")));
+    card.innerHTML=`<div class="marketIcon">${marketIcon(item.name)}</div>
+      <div class="marketName">${item.name.substring(item.name.indexOf(" ")+1)}</div>
+      <div class="marketDesc">${item.desc}</div>
+      ${item.trait?`<div class="trait">🧬 ${item.trait.name} · ${item.trait.desc}</div>`:""}
+      ${item.daily?`<div class="daily">⭐ ТОВАР ДНЯ</div>`:""}
+      ${item.kind!=="permanentSlot"?`<div class="shopPriceMeta">База: ${fmt(marketBasePrice(item))} · надбавка рынка: +${fmt(shopSurcharge())}${item.daily?` · скидка ${item.discount}%`:""}</div>`:""}
+      <div class="marketFoot"><b>${fmt(item.sale)} 🪙</b><button class="smallbtn" ${disabled?"disabled":""}>${item.kind==="permanentSlot"?"Открыть":(g.freeItemAvailable&&!g.freeItemClaimed&&item.type!=="loan"?"🎁 Получить бесплатно":"Купить")}</button></div>`;
+
+    card.querySelector("button").onclick=()=>{ if(g.freeItemAvailable&&!g.freeItemClaimed&&item.kind!=="permanentSlot"&&item.type!=="loan") claimFreeMarketItem(item.id); else buy(item.id); };el.appendChild(card);
+  });
+}
+
+function buy(id){
+  if((actionLock.buy||0)>Date.now())return; actionLock.buy=Date.now()+350;
+  const item=g.market.find(x=>x.id===id);if(!item)return;
+  if(g.cash<item.sale){toast("Недостаточно монет.");return;}
+  if(item.kind==="permanentSlot"){
+    if(g.permanentUnlocked>=2){toast("Все постоянные слоты уже открыты.");return;}
+    changeCash(-item.sale,"permanent slot purchase");
+    g.permanentUnlocked++;
+    g.permanentOfferedToday=true;
+    g.market=g.market.filter(x=>x.id!==id);
+    toast(`Открыт постоянный слот ${g.permanentUnlocked}.`);
+    render();return;
+  }
+  if(item.type!=="loan"&&g.inventory.length>=6){toast("Инвентарь заполнен: 6/6.");return;}
+  changeCash(-item.sale,"purchase");
+  if(item.type==="loan"){changeCash(300,"loan reward");g.debt=Math.ceil(Math.max(g.debt,g.due)*1.35);g.due=Math.ceil(g.due*1.35+g.debt*0.05);}
+  else {
+    if(item.type==="streak")item.charges=4;
+    if(item.type==="insurance")item.charges=3;
+    if(item.type==="random")item.spinsUsed=0;
+    if(item.type==="insurance")item.permNightUsed=false;
+    g.inventory.push(item);
+  }
+  g.market=g.market.filter(x=>x.id!==id);toast("Предмет куплен.");render();
+}
+
+function itemCard(item,permanent,index){
+  const el=document.createElement("div");el.className="invItem"+(permanent?" permanentSlot":"");
+  if(!item){
+    el.innerHTML=`<span>${permanent?"🔒 Пустой permanent slot":"Пусто"}</span>`;
+    if(permanent){el.ondragover=e=>e.preventDefault();el.ondrop=e=>dropToPermanent(e,index);}
+    return el;
+  }
+  el.draggable=true;
+  const rule=permanent?permanentRule(item):null;
+  const usage=permanent?"":(item.charges!=null?` · ${item.charges} заряд.`:item.type==="safe"?` · лимит ${fmt(safeLimit())}`:"");
+  const sellPrice=fmt(Math.floor((item.sale||item.price)*0.5));
+  const firstEmpty=g.permanent.findIndex(x=>!x);
+  const eligible=canBecomePermanent(item);
+  const moveLabel=!eligible?"🚫 Нельзя в permanent":(firstEmpty>=0&&firstEmpty<g.permanentUnlocked?`→ Постоянный слот ${firstEmpty+1}`:"Постоянные слоты заняты");
+  el.innerHTML=`<span class="permLock" title="Постоянный предмет">${permanent?"🔒":""}</span><b>${item.name}${permanent?` <span class="permBadge">ПОСТОЯННЫЙ</span>`:""}</b>${permanent&&rule?`<div class="permEffect">🔒 ${rule.text}</div>`:`<div class="tiny">${item.desc}${usage}</div>`}
+    ${item.trait?`<div class="trait">🧬 ${item.trait.name} · ${item.trait.desc}</div>`:""}
+    ${!permanent&&g.permanentUnlocked>0&&eligible?`<button class="smallbtn movePerm" ${firstEmpty<0||firstEmpty>=g.permanentUnlocked?"disabled":""}>${moveLabel}</button>`:""}
+    ${permanent?`<button class="smallbtn removePerm">↩ Убрать из permanent</button>`:""}
+    <button class="smallbtn">Продать за ${sellPrice} 🪙</button>`;
+  el.ondragstart=e=>e.dataTransfer.setData("text/plain",JSON.stringify({permanent,index}));
+  const buttons=el.querySelectorAll("button");
+  if(!permanent&&buttons.length>1)buttons[0].onclick=()=>moveInventoryToPermanent(index,firstEmpty);
+  if(permanent){
+    const removeBtn=el.querySelector(".removePerm");
+    if(removeBtn)removeBtn.onclick=()=>removeFromPermanent(index);
+  }
+  buttons[buttons.length-1].onclick=()=>sellItem(permanent,index);
+  if(permanent){el.ondragover=e=>e.preventDefault();el.ondrop=e=>dropToPermanent(e,index);}
+  return el;
+}
+
+function moveInventoryToPermanent(index,target){
+  if(index<0||index>=g.inventory.length)return;
+  if(target<0||target>=g.permanentUnlocked){toast("Нет свободного permanent-слота.");return;}
+  const item=g.inventory[index];if(!item)return;
+  if(!canBecomePermanent(item)){toast("Этот предмет нельзя поместить в permanent-слот.");return;}
+  const old=g.permanent[target];
+  g.permanent[target]=item;
+  g.inventory.splice(index,1);
+  if(old)g.inventory.push(old);
+  toast(old?"Предметы поменяны местами.":`Предмет помещён в постоянный слот ${target+1}.`);
+  render();
+}
+
+function dropToPermanent(e,target){
+  try{
+    if(target>=g.permanentUnlocked)return;
+    const src=JSON.parse(e.dataTransfer.getData("text/plain"));
+    if(!src||src.index==null)return;
+    const srcArr=src.permanent?g.permanent:g.inventory,srcItem=srcArr[src.index];
+    if(!srcItem)return;
+    if(!src.permanent&&!canBecomePermanent(srcItem)){toast("Этот предмет нельзя поместить в permanent-слот.");return;}
+    if(src.permanent){
+      if(src.index===target)return;
+      const tmp=g.permanent[target]||null;g.permanent[target]=srcItem;g.permanent[src.index]=tmp;
+    }else{
+      const old=g.permanent[target];
+      g.permanent[target]=srcItem;
+      g.inventory.splice(src.index,1);
+      if(old)g.inventory.push(old);
+    }
+    render();
+  }catch{}
+}
+
+function removeFromPermanent(index){
+  if(index<0||index>=g.permanentUnlocked)return;
+  const item=g.permanent[index];
+  if(!item)return;
+  if(g.inventory.length>=6){
+    toast("Инвентарь заполнен: 6/6. Освободи место перед извлечением.");
+    return;
+  }
+  g.inventory.push(item);
+  g.permanent[index]=null;
+  toast(`Предмет возвращён во временный инвентарь.`);
+  render();
+}
+
+function sellItem(permanent,index){
+  if(permanent&&index>=g.permanentUnlocked)return;
+  const arr=permanent?g.permanent:g.inventory,item=arr[index];if(!item)return;
+  changeCash(Math.floor((item.sale||item.price)*0.5),"sell");
+  if(permanent)arr[index]=null;else arr.splice(index,1);
+  toast("Предмет продан.");render();
+}
+
+function renderInventory(){
+  const targets=[$("#inventory"),$("#stashInventory")].filter(Boolean);
+  targets.forEach(box=>{box.innerHTML="";
+    for(let i=0;i<g.permanentUnlocked;i++)box.appendChild(itemCard(g.permanent[i],true,i));
+    for(let i=g.permanentUnlocked;i<2;i++){const locked=document.createElement("div");locked.className="invItem permanentSlot locked";locked.innerHTML="🔒 Постоянный слот не открыт";box.appendChild(locked);}
+    g.inventory.forEach((it,i)=>box.appendChild(itemCard(it,false,i)));
+  });
+  text("tempCount",`Временные — ${g.inventory.length}/6`);
+  text("permCount",`Постоянные — ${g.permanentUnlocked}/2`);
+  text("invCount",`${g.inventory.length}/6`);
+}
+
+function pickSymbol(){
+  let weights=SYMBOLS.map(x=>x.weight);
+  const luck=bonus("luck")+traitBonus("luck");
+  SYMBOLS.forEach((x,i)=>{if(x.s==="🍒"||x.s==="💎"||x.s==="7️⃣")weights[i]*=1+luck;});
+  const total=weights.reduce((a,b)=>a+b,0);let r=Math.random()*total;
+  for(let i=0;i<SYMBOLS.length;i++){r-=weights[i];if(r<=0)return SYMBOLS[i].s;}
+  return SYMBOLS[0].s;
+}
+
+function generateGrid(){
+  let grid=Array.from({length:3},()=>Array.from({length:5},pickSymbol));
+  const stTemp=g.inventory.find(i=>i.type==="streak"&&i.charges>0);
+  const stPerm=g.permanent.slice(0,g.permanentUnlocked).find(i=>i?.type==="streak");
+  if(stTemp){
+    for(let r=0;r<3;r++)if(Math.random()<stTemp.value){
+      const start=Math.floor(Math.random()*3),sym=pickSymbol();
+      for(let c=start;c<start+3;c++)grid[r][c]=sym;
+    }
+    stTemp.charges--;
+  }else if(stPerm){
+    for(let r=0;r<3;r++)if(Math.random()<PERMANENT_RULES.streak.value){
+      const start=Math.floor(Math.random()*3),sym=pickSymbol();
+      for(let c=start;c<start+3;c++)grid[r][c]=sym;
+    }
+  }
+  return grid;
+}
+
+function findWins(grid){
+  const wins=[];
+  for(let r=0;r<3;r++){
+    let c=0;while(c<5){const sym=grid[r][c],start=c;c++;while(c<5&&grid[r][c]===sym)c++;const len=c-start;
+      if(len>=3)wins.push({symbol:sym,len,vertical:false,cells:Array.from({length:len},(_,k)=>r*5+start+k)});
+    }
+  }
+  for(let c=0;c<5;c++){
+    let r=0;while(r<3){const sym=grid[r][c],start=r;r++;while(r<3&&grid[r][c]===sym)r++;const len=r-start;
+      if(len>=3)wins.push({symbol:sym,len,vertical:true,cells:Array.from({length:len},(_,k)=>(start+k)*5+c)});
+    }
+  }
+  return wins;
+}
+
+function linePayout(w,stake){
+  const s=SYMBOLS.find(x=>x.s===w.symbol);
+  let mult=s.base*({3:1,4:2.4,5:5.8}[w.len]||1);
+  if(w.symbol==="🍒")mult*=1+bonus("cherry");
+  if(w.symbol==="♣️")mult*=1+bonus("clover");
+  if(w.vertical)mult*=1+bonus("vertical");
+  if(g.heat>=70)mult*=1+bonus("heat");
+  if(g.event?.[2]==="casino"||g.event?.[2]==="debtCasino")mult*=g.event[3];
+  mult*=1+traitBonus("initial");
+  mult*=1+traitBonus("final");
+  return stake*mult;
+}
+
+function renderGrid(wins=g.lastGridWins||[]){
+  const el=$("#grid");if(!el)return;el.innerHTML="";
+  const marked=new Set();wins.forEach(w=>w.cells.forEach(i=>marked.add(i)));
+  const cells=g.grid.length?g.grid.flat():Array(15).fill("?");
+  cells.forEach((s,i)=>{const d=document.createElement("div");d.className="cell"+(marked.has(i)?" hit":"");d.textContent=s;el.appendChild(d);});
+  const pills=$("#linePills");if(pills){pills.innerHTML="";wins.forEach(w=>{const d=document.createElement("div");d.className="linepill";d.textContent=`${w.vertical?"↕":"→"} ${w.symbol} ×${w.len}`;pills.appendChild(d);});}
+}
+
+function consumeInsurance(){
+  const temp=g.inventory.find(i=>i.type==="insurance"&&i.charges>0);
+  if(temp){temp.charges--;return temp.value;}
+  const perm=g.permanent.slice(0,g.permanentUnlocked).find(i=>i?.type==="insurance");
+  if(perm&&!perm.permNightUsed){perm.permNightUsed=true;return PERMANENT_RULES.insurance.value;}
+  return 0;
+}
+
+function spin(){
+  if((actionLock.spin||0)>Date.now())return; actionLock.spin=Date.now()+450;
+  if(g.phase!=="night"){toast("Крутка доступна только ночью.");return;}
+  if(g.spins>=nightSpinLimit()){toast(`Лимит ночи: ${nightSpinLimit()} Spin.`);return;}
+  const stake=betAmount();if(g.cash<stake||stake<1){toast("Недостаточно монет для этой ставки.");return;}
+
+  changeCash(-stake,"spin stake");
+  g.spins++;
+  g.heat=Math.min(100,g.heat+5);
+  g.grid=generateGrid();
+  let wins=findWins(g.grid);
+  let total=0,lines=[];
+
+  wins.forEach((w,idx)=>{
+    let p=linePayout(w,stake);
+    total+=p;lines.push(`${w.vertical?"↕":"→"} ${w.symbol} ×${w.len}: +${fmt(p)}`);
+  });
+
+  const jackpotCount=wins.filter(w=>w.len===5&&(w.symbol==="💎"||w.symbol==="7️⃣")).length;
+  if(jackpotCount){
+    const p=stake*100*(1+traitBonus("jackpot"))*jackpotCount;
+    total+=p;lines.push(`💥 ДЖЕКПОТ ×${jackpotCount}: +${fmt(p)}`);
+  }
+
+  // Double Luck: temporary is stronger/short-lived; permanent is weaker/always available.
+  const randomTemp=g.inventory.find(i=>i.type==="random");
+  const randomPerm=g.permanent.slice(0,g.permanentUnlocked).find(i=>i?.type==="random");
+  if(randomTemp){
+    randomTemp.spinsUsed=(randomTemp.spinsUsed||0)+1;
+    if(randomTemp.spinsUsed%3===0&&wins.length){
+      const idx=Math.floor(Math.random()*wins.length),extra=linePayout(wins[idx],stake)*randomTemp.value;
+      total+=extra;lines.push(`🃏 Двойная удача: +${fmt(extra)} к случайной линии`);
+    }
+  }else if(randomPerm){
+    randomPerm.spinsUsed=(randomPerm.spinsUsed||0)+1;
+    if(randomPerm.spinsUsed%5===0&&wins.length){
+      const idx=Math.floor(Math.random()*wins.length),extra=linePayout(wins[idx],stake)*PERMANENT_RULES.random.value;
+      total+=extra;lines.push(`🃏 Permanent: +${fmt(extra)} к случайной линии`);
+    }
+  }
+
+  if(g.betIndex===3)total*=1.25;
+  if(g.heat>=95)total*=1.20;
+
+  if(!total){
+    const refund=consumeInsurance();
+    if(refund){total=stake*refund;lines.push(`🧯 Страховка: +${fmt(total)}`);}
+  }
+
+  changeCash(total,total?"casino payout":"spin loss");
+  g.lastGridWins=wins;
+  g.lastWin=lines.length?lines.join("<br>"):"Комбинаций нет.";
+  g.lastMath=[
+    `Ставка: ${fmt(stake)} 🪙`,`Найдено линий: ${wins.length}`,
+    ...lines,`Итого: ${fmt(total)} 🪙`,`Баланс после Spin: ${fmt(g.cash)} 🪙`,
+    `HEAT: ${g.heat}% · ставка 30%`
+  ].join("<br>");
+  render();
+}
+
+
+// Last Call: five reaction rounds. All credited income shares the normal daily cap.
+let lastCallTimer=null;
+let lastCallMode="safe";
+function lastCallStake(){return Math.max(1,Math.floor(dayCap()*0.05));}
+function showLastCallGuide(){
+  if(g.lastCallActive){toast("Заверши текущую игру, чтобы открыть правила.");return;}
+  const box=$("#lastCallGuide");if(!box)return;
+  $("#lastCallAgree").checked=false;
+  $("#lastCallGuideAccept").disabled=true;
+  box.classList.remove("hidden");
+}
+function closeLastCallGuide(accepted){
+  const box=$("#lastCallGuide");if(!box)return;
+  if(accepted){
+    if(!$("#lastCallAgree").checked){toast("Отметь, что ознакомился с правилами.");return;}
+    g.lastCallGuideAccepted=true;save();
+  }
+  box.classList.add("hidden");
+}
+function selectLastCallMode(mode){
+  if(g.lastCallActive){toast("Сначала заверши текущую игру.");return;}
+  lastCallMode=mode==="risk"?"risk":"safe";
+  $("#lastCallSafe").classList.toggle("selected",lastCallMode==="safe");
+  $("#lastCallRisk").classList.toggle("selected",lastCallMode==="risk");
+  $("#lastCallRiskLabel").textContent=`Ставка — ${fmt(lastCallStake())} 🪙 (5% лимита)`;
+}
+function lastCallSetSignal(message,kind=""){
+  const el=$("#lastCallSignal");if(!el)return;
+  el.className="lastCallSignal"+(kind?" "+kind:"");el.textContent=message;
+}
+function startLastCall(){
+  if(g.phase!=="day"){toast("«Последний звонок» доступен только днём.");return;}
+  if(g.earned>=dayCap()){toast("Дневной лимит уже достигнут.");return;}
+  if(g.lastCallActive){toast("Игра уже идёт.");return;}
+  if(!g.lastCallGuideAccepted){showLastCallGuide();return;}
+  const stake=lastCallMode==="risk"?lastCallStake():0;
+  if(stake&&g.cash<stake){toast(`Для риска нужно ${fmt(stake)} 🪙.`);return;}
+  if(stake)changeCash(-stake,"last call risk stake");
+  g.lastCallActive={round:0,hits:0,reward:0,stake,mode:lastCallMode,waiting:true,startedAt:Date.now()};
+  $("#lastCallStart").classList.add("hidden");
+  $("#lastCallHit").classList.remove("hidden");
+  $("#lastCallHit").disabled=true;
+  $("#lastCallSafe").disabled=true;$("#lastCallRisk").disabled=true;
+  text("lastCallRound","0/5");text("lastCallReward","0 🪙");
+  text("lastCallFeedback",stake?`Ставка ${fmt(stake)} 🪙 внесена. Дождись зелёного сигнала.`:"Сосредоточься. Жди зелёный сигнал.");
+  nextLastCallRound();
+  render();save();
+}
+function nextLastCallRound(){
+  if(!g.lastCallActive)return;
+  const a=g.lastCallActive;
+  if(a.round>=5){finishLastCall();return;}
+  a.waiting=true;a.signalAt=0;a.roundStartedAt=Date.now();
+  text("lastCallRound",`${a.round+1}/5`);
+  $("#lastCallHit").disabled=true;
+  lastCallSetSignal("ЖДИ…","");text("lastCallFeedback","Не нажимай, пока не появится зелёный сигнал.");
+  save();
+  clearTimeout(lastCallTimer);
+  lastCallTimer=setTimeout(()=>{
+    if(!g.lastCallActive)return;
+    a.waiting=false;a.signalAt=Date.now();
+    lastCallSetSignal("СЕЙЧАС!","ready");
+    $("#lastCallHit").disabled=false;
+    text("lastCallFeedback","Жми кнопку прямо сейчас!");
+    save();
+    lastCallTimer=setTimeout(()=>{
+      if(!g.lastCallActive||g.lastCallActive.waiting===true)return;
+      a.waiting=true;a.round++;text("lastCallFeedback","Слишком медленно — раунд пропущен.");
+      lastCallSetSignal("СИГНАЛ УШЁЛ","false");
+      setTimeout(()=>{if(g.lastCallActive){a.hits=Math.max(0,a.hits);nextLastCallRound();}},550);
+      save();
+    },1200);
+  },1800+Math.floor(Math.random()*1700));
+}
+function hitLastCall(){
+  const a=g.lastCallActive;if(!a)return;
+  if(a.waiting||!a.signalAt){
+    if(a.earlyHandled)return;
+    a.earlyHandled=true;clearTimeout(lastCallTimer);a.round++;lastCallSetSignal("РАНО!","false");
+    text("lastCallFeedback","Слишком рано: этот раунд не засчитан.");
+    $("#lastCallHit").disabled=true;save();
+    lastCallTimer=setTimeout(nextLastCallRound,550);return;
+  }
+  clearTimeout(lastCallTimer);
+  const reaction=Date.now()-a.signalAt;
+  let pct=0,grade="";
+  if(reaction<=250){pct=0.03;grade="Идеально";}
+  else if(reaction<=450){pct=0.02;grade="Отлично";}
+  else if(reaction<=700){pct=0.01;grade="Успел";}
+  if(pct>0){a.hits++;a.reward+=Math.floor(dayCap()*pct);}
+  a.round++;a.waiting=true;a.signalAt=0;
+  lastCallSetSignal(`${reaction} мс · ${grade}`,reaction<=450?"ready":"");
+  text("lastCallReward",`${fmt(a.reward)} 🪙`);
+  text("lastCallFeedback",`Реакция: ${reaction} мс. Успешных раундов: ${a.hits}/5.`);
+  $("#lastCallHit").disabled=true;save();
+  lastCallTimer=setTimeout(nextLastCallRound,650);
+}
+function finishLastCall(){
+  const a=g.lastCallActive;if(!a)return;
+  clearTimeout(lastCallTimer);
+  const cap=dayCap(),room=Math.max(0,cap-g.earned);
+  const base=Math.min(room,a.reward);
+  if(base>0){changeCash(base,"last call skill income");g.earned+=base;}
+  let riskBonus=0;
+  if(a.stake>0){
+    if(a.hits>=4){
+      // Return the stake, then award up to the same amount as profit, subject to the daily cap.
+      changeCash(a.stake,"last call stake returned");
+      riskBonus=Math.min(Math.max(0,dayCap()-g.earned),a.stake);
+      if(riskBonus>0){changeCash(riskBonus,"last call risk bonus");g.earned+=riskBonus;}
+      text("lastCallFeedback",`Успех ${a.hits}/5! Ставка возвращена, бонус риска: ${fmt(riskBonus)} 🪙.`);
+    }else{
+      text("lastCallFeedback",`Риск не прошёл (${a.hits}/5). Ставка ${fmt(a.stake)} 🪙 потеряна.`);
+    }
+  }else text("lastCallFeedback",`Игра завершена: ${a.hits}/5 успешных раундов. Получено ${fmt(base)} 🪙.`);
+  g.lastCallBest=Math.max(Number(g.lastCallBest)||0,a.hits);
+  g.lastCallActive=null;
+  $("#lastCallStart").classList.remove("hidden");$("#lastCallHit").classList.add("hidden");
+  $("#lastCallSafe").disabled=false;$("#lastCallRisk").disabled=false;
+  $("#lastCallStart").textContent="↻ Сыграть ещё раз";
+  lastCallSetSignal("ИГРА ЗАВЕРШЕНА","");
+  text("lastCallRound",`5/5 · ${a.hits} успех.`);
+  text("lastCallReward",`${fmt(base+riskBonus)} 🪙`);
+  render();save();
+}
+function renderLastCall(){
+  text("lastCallRiskLabel",`Ставка — ${fmt(lastCallStake())} 🪙 (5% лимита)`);
+  const active=!!g.lastCallActive;
+  $("#lastCallStart").disabled=active||g.phase!=="day"||g.earned>=dayCap();
+  if(active){
+    $("#lastCallStart").classList.add("hidden");$("#lastCallHit").classList.remove("hidden");
+    $("#lastCallSafe").disabled=true;$("#lastCallRisk").disabled=true;
+  }
+}
+
+const CARD_SUITS=["♠","♥","♦","♣"];
+function drawCard(){const rank=Math.floor(Math.random()*13)+1;return {rank,suit:CARD_SUITS[Math.floor(Math.random()*4)]};}
+function cardValue(c){return c.rank===1?11:c.rank>=10?10:c.rank;}
+function handValue(hand){let total=hand.reduce((n,c)=>n+cardValue(c),0),aces=hand.filter(c=>c.rank===1).length;while(total>21&&aces>0){total-=10;aces--;}return total;}
+function cardLabel(c){return `${c.rank===1?"A":c.rank===11?"J":c.rank===12?"Q":c.rank===13?"K":c.rank}${c.suit}`;}
+function blackjackStart(){
+  if(!meta.blackjackUnlocked)return;
+  if(g.blackjackRound?.active)return;
+  const stake=Math.min(g.cash,Math.max(1,Math.floor(g.cash*0.10)));
+  if(g.cash<1){g.blackjackRound={active:true,training:true,player:[drawCard(),drawCard()],dealer:[drawCard(),drawCard()],stake:0};renderBlackjack();return;}
+  changeCash(-stake,"blackjack stake");
+  g.blackjackRound={active:true,training:false,player:[drawCard(),drawCard()],dealer:[drawCard(),drawCard()],stake};
+  const r=g.blackjackRound;
+  if(handValue(r.player)===21){blackjackFinish();return;}
+  save();renderBlackjack();render();
+}
+function blackjackHit(){const r=g.blackjackRound;if(!r?.active)return;r.player.push(drawCard());if(handValue(r.player)>=21)blackjackFinish();else{save();renderBlackjack();render();}}
+function blackjackStand(){const r=g.blackjackRound;if(!r?.active)return;while(handValue(r.dealer)<17)r.dealer.push(drawCard());blackjackFinish();}
+function blackjackFinish(){
+  const r=g.blackjackRound;if(!r?.active)return;
+  while(handValue(r.dealer)<17)r.dealer.push(drawCard());
+  const pv=handValue(r.player),dv=handValue(r.dealer);let result;
+  if(pv>21)result="lose";else if(dv>21||pv>dv)result="win";else if(pv===dv)result="push";else result="lose";
+  if(!r.training){if(result==="win")changeCash(r.stake*2,"blackjack win payout");else if(result==="push")changeCash(r.stake,"blackjack push refund");}
+  r.active=false;r.result=result;save();renderBlackjack();render();
+}
+function renderBlackjack(){
+  const locked=$("#blackjackLocked"),play=$("#blackjackPlay"),unlock=$("#unlockBlackjack"),status=$("#blackjackStatus");
+  if(!locked||!play||!unlock||!status)return;
+  locked.classList.toggle("hidden",meta.blackjackUnlocked);play.classList.toggle("hidden",!meta.blackjackUnlocked);unlock.classList.toggle("hidden",meta.blackjackUnlocked);
+  status.textContent=meta.blackjackUnlocked?"ОТКРЫТО НАВСЕГДА":`🔒 ${BLACKJACK_COST} 🎟️`;
+  const r=g.blackjackRound;
+  const table=$("#blackjackTable");
+  if(table){
+    if(!r)table.textContent="Нажми «Новая раздача», чтобы начать.";
+    else if(r.training&&!r.active){table.textContent="Тренировочная раздача завершена — денежной выплаты нет.";}
+    else {const dealer=r.active?[r.dealer[0],{hidden:true}]:r.dealer;const dText=dealer.map(c=>c.hidden?"🂠":cardLabel(c)).join("  ");const pText=r.player.map(cardLabel).join("  ");const result=r.result?({win:"Победа! Выплата 2× ставки.",lose:"Проигрыш. Ставка потеряна.",push:"Ничья. Ставка возвращена."})[r.result]:(r.training?"Тренировочная раздача — без денежных выплат.":`Ставка: ${fmt(r.stake)} 🪙`);table.innerHTML=`<div><b>Дилер</b>: ${dText}${r.active?"":" · "+handValue(r.dealer)}</div><div style="margin-top:8px"><b>Ты</b>: ${pText} · ${handValue(r.player)}</div><div style="margin-top:10px;color:var(--gold)">${result}</div>`;}
+  }
+  $("#blackjackHit").disabled=!r?.active;$("#blackjackStand").disabled=!r?.active;$("#blackjackStart").disabled=!!r?.active;
+}
+function buyTicket(){if(g.cash<TICKET_RATE){toast("Недостаточно монет для обмена.");return;}changeCash(-TICKET_RATE,"ticket exchange");meta.tickets++;saveMeta();render();toast("Получен 1 тикет. Тикеты сохраняются между забегами.");}
+function buySkill(which){
+  const cfg=which==="fingers"?{max:10,cost:3}:{max:5,cost:5};
+  const level=meta.skills[which]||0;
+  if(level>=cfg.max){toast("Навык уже прокачан до максимума.");return;}
+  const cost=cfg.cost+level*(which==="fingers"?2:3);
+  if(meta.tickets<cost){toast("Недостаточно тикетов.");return;}
+  meta.tickets-=cost;meta.skills[which]=level+1;saveMeta();render();toast("Постоянный навык улучшен.");
+}
+function unlockBlackjack(){if(meta.blackjackUnlocked)return;if(meta.tickets<BLACKJACK_COST){toast("Нужно 25 тикетов для разблокировки.");return;}meta.tickets-=BLACKJACK_COST;meta.blackjackUnlocked=true;saveMeta();render();toast("Блэкджек открыт навсегда!");}
+
+function render(){
+  text("cash",fmt(g.cash)+" 🪙");text("dayStat",g.day);
+  const cap=dayCap(),earned=Math.min(g.earned,cap),pct=cap>0?Math.min(100,earned/cap*100):0;
+  text("dayCapText",fmt(cap)+" 🪙");text("dayEarned",`${fmt(earned)} / ${fmt(cap)} 🪙`);
+  const lb=$("#dayLimitBar");if(lb)lb.style.width=pct.toFixed(1)+"%";
+  text("dayScaleText","Лимит "+fmt(cap)+" 🪙");
+  text("tapGain","+"+clickGain().toFixed(2));
+  // Due is a mandatory payment, never larger than the outstanding debt.
+  if(g.due>g.debt)g.due=g.debt;
+  text("debtBig",fmt(Math.max(0,Number(g.due)||0))+" 🪙");text("debtDue","База цикла: "+fmt(Math.max(0,Number(g.debt)||0))+" 🪙");
+  text("debtMissed",g.missed+"/5");text("heatText",g.heat+"%");text("heatStat",fmt(g.heat)+"%");
+  text("debtStat",fmt(Math.max(0,Number(g.due)||0)));text("nightSpins",g.spins+"/"+nightSpinLimit());
+  text("mathDay",g.day);text("mathScale","×"+(baseClickGain()/Math.max(1,CLICK_GAINS[0])).toFixed(2));text("mathCap",fmt(dayCap()));text("baseClickText",fmt(baseClickGain()));
+  text("eventStatus",g.event?"АКТИВНО":"—");
+  const event=$("#eventBox");if(event)event.innerHTML=g.event?`<b>${g.event[0]}</b><br>${g.event[1]}`:"Сегодня тихо. House пока ничего не обещает.";
+  const bar=$("#heatBar");if(bar)bar.style.width=g.heat+"%";
+  const win=$("#winText");if(win)win.innerHTML=g.lastWin;
+  const math=$("#mathBox");if(math)math.innerHTML=g.lastMath;
+  const spinBtn=$("#spinBtn");if(spinBtn)spinBtn.textContent=`🎰 КРУТИТЬ · ${fmt(betAmount())} 🪙`;
+  text("bet30",fmt(betAmount())+" 🪙");
+  $$(".betChoice").forEach((b,i)=>b.classList.toggle("selected",i===0));
+  $$(".tab").forEach(b=>{const p=b.dataset.phase,unlocked=p==="day"||(p==="evening"&&g.phase==="market")||(p==="night"&&g.phase==="night");b.classList.toggle("current",p===(g.phase==="market"?"evening":g.phase));b.classList.toggle("unlocked",unlocked);b.disabled=!unlocked;});
+  const cost=rerollCost();
+  text("rerollCost",g.freeRerolls>0?"БЕСПЛАТНО":fmt(cost)+" 🪙");
+  text("rerolls",g.rerolls);
+  const rewardNotice=$("#debtRewardNotice");
+  if(rewardNotice){
+    rewardNotice.innerHTML=(g.freeRerolls>0||g.freeItemAvailable)
+      ? `<b>🎁 Награда за досрочное погашение</b><br>Бесплатных замен: <b>${g.freeRerolls}</b> · Бесплатный предмет: <b>${g.freeItemAvailable&&!g.freeItemClaimed?"доступен":"нет"}</b>`
+      : "";
+    rewardNotice.classList.toggle("hidden",!(g.freeRerolls>0||g.freeItemAvailable));
+  }
+  text("ticketBalance",fmt(meta.tickets));text("exchangeCash",fmt(g.cash));
+  text("skillFingersLevel",`${meta.skills.fingers}/10`);text("skillCapitalLevel",`${meta.skills.capital}/5`);
+  const fCost=3+meta.skills.fingers*2,cCost=5+meta.skills.capital*3;
+  text("skillFingersCost",meta.skills.fingers>=10?"Максимум":`Цена: ${fCost} тикета`);text("skillCapitalCost",meta.skills.capital>=5?"Максимум":`Цена: ${cCost} тикетов`);
+  const fBtn=$("#buySkillFingers"),cBtn=$("#buySkillCapital");if(fBtn)fBtn.disabled=meta.skills.fingers>=10||meta.tickets<fCost;if(cBtn)cBtn.disabled=meta.skills.capital>=5||meta.tickets<cCost;
+  const buy=$("#buyTicket");if(buy)buy.disabled=g.cash<TICKET_RATE;
+  renderMarket();renderInventory();renderGrid();renderLastCall();renderBlackjack();updateViews();save();localizeDom();
+}
+
+function updateViews(){
+  const map={day:"#dayView",market:"#eveningView",night:"#nightView"};
+  Object.entries(map).forEach(([p,id])=>{const el=$(id);if(el)el.classList.toggle("hidden",g.stashOpen||g.phase!==p);});
+  const stash=$("#stashView");if(stash)stash.classList.toggle("hidden",!g.stashOpen);
+  $$(".navbtn").forEach(b=>{const target=b.dataset.nav==="evening"?"market":b.dataset.nav;b.classList.toggle("active",g.stashOpen?target==="stash":target===g.phase);});
+}
+
+function finishWork(){
+  if((actionLock.finishWork||0)>Date.now())return; actionLock.finishWork=Date.now()+500;
+  if(g.phase!=="day")return;
+  if(!g.market.length){
+    g.shopBalanceSnapshot=Math.max(0,g.cash);
+    g.shopScale=shopScaleForDay(g.day);
+    buildMarket();
+  }
+  setPhase("market");
+  toast(g.earned>=dayCap()?"Лимит дня достигнут. Рынок открыт.":"Рабочий день закончен. Рынок открыт.");
+}
+
+function finishEvening(){if((actionLock.finishEvening||0)>Date.now())return; actionLock.finishEvening=Date.now()+500;if(g.phase!=="market")return;setPhase("night");toast("Ночь началась. House ждёт.");}
+
+
+function daysUsedInDebtCycle(){
+  return Math.max(0, Number(g.day||1) - Number(g.debtCycleStartDay||g.day||1));
+}
+function daysRemainingForEarlyPay(){
+  return Math.max(0, (Number(g.debtCycleLength)||5) - daysUsedInDebtCycle());
+}
+function grantDebtClearReward(){
+  const remaining = daysRemainingForEarlyPay();
+  // Early-pay rewards are separate from the debt-cycle transition flag.
+  g.debtPaidEarly = remaining > 0;
+  g.freeRerolls = remaining;
+  g.freeItemAvailable = true;
+  g.freeItemClaimed = false;
+  g.rerolls = 0;
+  toast(remaining>0
+    ? `Долг закрыт досрочно: ${remaining} бесплатн. замен(ы) + 1 бесплатный предмет.`
+    : "Долг закрыт. Новый долговой цикл начинается.");
+}
+function claimFreeMarketItem(id){
+  const item=g.market.find(x=>x.id===id);
+  if(!item || !g.freeItemAvailable || g.freeItemClaimed || item.kind==="permanentSlot"){
+    toast("Бесплатный предмет уже использован.");
+    return;
+  }
+  if(item.type!=="loan" && g.inventory.length>=6){
+    toast("Инвентарь заполнен: 6/6.");
+    return;
+  }
+  if(item.type==="loan"){
+    toast("Долговой кредит нельзя получить бесплатно.");
+    return;
+  }
+  item.isFreeClaim=true;
+  if(item.type==="streak")item.charges=4;
+  if(item.type==="insurance")item.charges=3;
+  if(item.type==="random")item.spinsUsed=0;
+  g.inventory.push(item);
+  g.market=g.market.filter(x=>x.id!==id);
+  g.freeItemClaimed=true;
+  g.freeItemAvailable=false;
+  toast("Предмет получен бесплатно. Его свойства сохранены.");
+  render();
+}
+function transitionToNewDay(skipWork){
+  const limitBeforeBurn=safeLimit();
+  if(g.cash>limitBeforeBurn){
+    const loss=Math.floor((g.cash-limitBeforeBurn)*0.10);
+    if(loss>0){ changeCash(-loss,"unsafe cash loss at day transition"); }
+  }
+
+  // Temporary artifacts live for the whole debt cycle, not for one calendar day.
+  g.day++;
+  g.earned=0;
+  g.heat=Math.max(0,g.heat-18);
+
+  // A paid debt creates the next debt; an unpaid debt remains exactly as-is.
+  if(g.debtCleared){
+    // A fully paid debt starts a new debt cycle. Only here is the 1.9x
+    // growth applied.
+    g.debt=Math.max(1500,Math.ceil((Number(g.debt)||1500)*1.9));
+    g.due=currentDebt();
+    g.debtCycleStartDay=g.day;
+    g.debtCleared=false;
+    g.debtPaidEarly=false;
+  }else{
+    // IMPORTANT: an unpaid/partially paid debt must keep its outstanding
+    // balance. Do NOT rebuild due from g.debt, otherwise a payment such as
+    // 300/1500 would incorrectly return to 1500 on the next day.
+    g.due=Math.max(0,Number(g.due)||0);
+  }
+
+  g.debtSanction=null;
+  g.event=EVENTS[Math.floor(Math.random()*EVENTS.length)];
+  g.market=[];
+  g.shopBalanceSnapshot=null;
+  g.shopScale=null;
+  g.rerolls=0;
+  g.spins=0;
+  g.betIndex=0;
+  g.lastGridWins=[];
+  g.grid=[];
+  g.permanentOfferedToday=false;
+
+  // IMPORTANT: inventory is NOT cleared here. It expires only after a debt is paid
+  // and the next debt cycle starts.
+  g.permanent.slice(0,g.permanentUnlocked).filter(Boolean).forEach(i=>{
+    if(i.type==="insurance")i.permNightUsed=false;
+    if(i.type==="random")i.spinsUsed=0;
+  });
+
+  if(skipWork){
+    g.phase="night";
+    g.lastWin="Пропуск рабочего дня. Сразу ночь.";
+  }else{
+    g.phase="day";
+    g.lastWin="Новый день. Сначала работа.";
+  }
+}
+
+function finishNight(){
+  if((actionLock.finishNight||0)>Date.now())return;
+  actionLock.finishNight=Date.now()+700;
+  if(g.phase!=="night")return;
+
+  if(g.due>0){
+    g.missed=Math.min(5,(Number(g.missed)||0)+1);
+    if(g.missed>=5){
+      showGameOver();
+      return;
+    }
+    transitionToNewDay(false);
+    toast(`Долг не погашен. Осталось дней: ${5-g.missed}.`);
+  }else{
+    // The debt was fully paid earlier. Start a fresh cycle and consume the temporary build.
+    g.missed=0;
+    g.inventory=[];
+    g.debtCleared=true;
+    grantDebtClearReward();
+    transitionToNewDay(false);
+    toast("Долг закрыт. Временные предметы сгорели — начался новый цикл.");
+  }
+  render();
+}
+
+function payDebt(){
+  if((actionLock.payDebt||0)>Date.now())return;
+  actionLock.payDebt=Date.now()+350;
+
+  if(g.due<=0){toast("Долг уже оплачен.");return;}
+  const payment=Math.min(g.cash,g.due);
+  if(payment<=0){toast("Нет денег для оплаты.");return;}
+
+  changeCash(-payment,"debt payment");
+  g.due=Math.max(0,Number(g.due)-payment);
+
+  if(g.due<=0){
+    g.missed=0;
+    g.debtCleared=true;
+
+    // Completing a debt cycle unlocks the next earning ceiling.
+    // The increase is applied on the following day, not while still in the
+    // current work phase.
+    g.incomeTier=Math.max(0,(Number(g.incomeTier)||0)+1);
+
+    grantDebtClearReward();
+  }
+  toast(`Оплачено ${fmt(payment)} 🪙`);
+  render();
+}
+
+function rerollMarket(){
+  if((actionLock.reroll||0)>Date.now())return;
+  actionLock.reroll=Date.now()+400;
+  if(g.phase!=="market")return;
+
+  if(g.freeRerolls>0){
+    g.freeRerolls--;
+    buildMarket();
+    toast(`Бесплатная замена рынка. Осталось: ${g.freeRerolls}.`);
+    render();
+    return;
+  }
+
+  const cost=rerollCost();
+  if(g.cash<cost){toast("Недостаточно монет для замены.");return;}
+  changeCash(-cost,"market reroll");
+  g.rerolls++;
+  buildMarket();
+  toast("Рынок обновлён.");
+  render();
+}
+
+function clickCoin(){
+  if(g.phase!=="day"){toast("Монеты зарабатываются только днём.");return;}
+  if(g.earned>=dayCap()){toast("Дневной лимит достигнут.");return;}
+  const gain=Math.min(clickGain(),dayCap()-g.earned);
+  changeCash(gain,"work income");g.earned+=gain;
+  const coin=$("#coinBtn");if(coin){coin.style.transform="scale(.96)";setTimeout(()=>coin.style.transform="",70);}
+  render();
+}
+
+function migrate(){
+  const oldKeys=["house_alpha02_visual","the_house_alpha02_fixed","the_house_alpha013"];
+  if(!localStorage.getItem(SAVE_KEY)){
+    for(const k of oldKeys)try{const old=JSON.parse(localStorage.getItem(k));if(old&&typeof old.cash==="number"){g={...fresh(),...old};break;}}catch{}
+  }
+  g={...fresh(),...g};
+  // A reload must never leave a paid stake or an active round stranded.
+  if(g.lastCallActive){
+    const interruptedStake=Math.max(0,Number(g.lastCallActive.stake)||0);
+    if(interruptedStake>0)changeCash(interruptedStake,"last call interrupted stake refund");
+    g.lastCallActive=null;
+  }
+  if(typeof g.lastCallGuideAccepted!=="boolean")g.lastCallGuideAccepted=false;
+  if(typeof g.lastCallBest!=="number")g.lastCallBest=0;
+  if(g.shopPricingVersion!==1){
+    g.shopPricingVersion=1;
+    g.market=[];
+    g.shopBalanceSnapshot=null;
+    g.shopScale=null;
+  }
+  if(!Array.isArray(g.inventory))g.inventory=[];if(!Array.isArray(g.permanent))g.permanent=[null,null];
+  while(g.permanent.length<2)g.permanent.push(null);g.permanent=g.permanent.slice(0,2);
+  if(typeof g.permanentUnlocked!=="number")g.permanentUnlocked=g.permanent.some(Boolean)?Math.min(2,g.permanent.filter(Boolean).length):0;
+  if(Number(g.due)>Number(g.debt))g.due=Number(g.debt)||0;
+  if(typeof g.permanentOfferedToday!=="boolean")g.permanentOfferedToday=false;
+  g.permanentUnlocked=Math.max(0,Math.min(2,g.permanentUnlocked));
+  // Debt credit is intentionally never eligible for permanent slots.
+  for(let i=0;i<g.permanentUnlocked;i++){
+    if(g.permanent[i]?.type==="loan"){
+      const loan=g.permanent[i];
+      g.permanent[i]=null;
+      if(g.inventory.length<6)g.inventory.push(loan);
+      else changeCash(Math.floor((loan.sale||loan.price||0)*0.5),"invalid permanent loan refund");
+    }
+  }
+  if(!["day","market","night"].includes(g.phase))g.phase="day";
+  if(g.phase==="market"&&!g.market.length){
+    g.shopBalanceSnapshot=Math.max(0,g.cash);
+    g.shopScale=shopScaleForDay(g.day);
+    buildMarket();
+  }
+  if(!g.event)g.event=EVENTS[Math.floor(Math.random()*EVENTS.length)];
+  if(typeof g.debt!=="number"||g.debt<300)g.debt=1500;
+  if(typeof g.due!=="number"||g.due<0)g.due=currentDebt();
+  // A zero balance means the current debt was fully paid. Keep that state
+  // through reloads so finishNight() can create the next debt cycle instead
+  // of leaving the player stuck at "debt already paid".
+  if(typeof g.debtCleared!=="boolean")g.debtCleared=false;
+  if(g.due<=0)g.debtCleared=true;
+  if(typeof g.stashOpen!=="boolean")g.stashOpen=false;
+  if(typeof g.missed!=="number")g.missed=0;
+  // Legacy debt sanctions are retired in this patch. Existing runs keep their debt amount.
+  g.debtSanction=null;
+  if(Number(g.version||0)<8 && g.debt===300){g.debt=1500;g.due=1500;g.missed=0;}
+  g.version=12;
+  if(g.missed<0)g.missed=0;
+  if(g.missed>5)g.missed=5;
+  if(!g.debtSanction||typeof g.debtSanction!=="object")g.debtSanction=null;
+  if(typeof g.gameOver!=="boolean")g.gameOver=false;
+  if(g.missed>=5)g.gameOver=true;
+  if(!Array.isArray(g.ledger))g.ledger=[];
+  if(!Array.isArray(g.lastGridWins))g.lastGridWins=[];
+}
+
+function init(){
+  migrate();
+  if(g.gameOver){const ov=$("#debtOverlay");if(ov)ov.classList.remove("hidden");}
+  $("#languageToggle")?.addEventListener("click",()=>setLanguage(meta.language==="ru"?"en":"ru"));
+  $("#buyTicket")?.addEventListener("click",buyTicket);
+  $("#buySkillFingers")?.addEventListener("click",()=>buySkill("fingers"));
+  $("#buySkillCapital")?.addEventListener("click",()=>buySkill("capital"));
+  $("#unlockBlackjack")?.addEventListener("click",unlockBlackjack);
+  $("#blackjackStart")?.addEventListener("click",blackjackStart);
+  $("#blackjackHit")?.addEventListener("click",blackjackHit);
+  $("#blackjackStand")?.addEventListener("click",blackjackStand);
+  if(!meta.languageChosen){meta.language=tgLanguage.startsWith("en")?"en":"ru";meta.languageChosen=true;saveMeta();}
+  $("#coinBtn")?.addEventListener("click",clickCoin);
+  $("#lastCallStart")?.addEventListener("click",startLastCall);
+  $("#lastCallHit")?.addEventListener("click",hitLastCall);
+  $("#lastCallInfo")?.addEventListener("click",showLastCallGuide);
+  $("#lastCallGuideClose")?.addEventListener("click",()=>closeLastCallGuide(false));
+  $("#lastCallGuideAccept")?.addEventListener("click",()=>{closeLastCallGuide(true);if(g.lastCallGuideAccepted)startLastCall();});
+  $("#lastCallAgree")?.addEventListener("change",e=>{$("#lastCallGuideAccept").disabled=!e.target.checked;});
+  $("#lastCallSafe")?.addEventListener("click",()=>selectLastCallMode("safe"));
+  $("#lastCallRisk")?.addEventListener("click",()=>selectLastCallMode("risk"));
+  $("#goEvening")?.addEventListener("click",finishWork);
+  $("#goNight")?.addEventListener("click",finishEvening);
+  $("#finishNight")?.addEventListener("click",finishNight);
+  $("#spinBtn")?.addEventListener("click",spin);
+  $$(".betChoice").forEach((b,i)=>b.addEventListener("click",()=>selectBet(i)));
+  $("#repayBtn")?.addEventListener("click",payDebt);$("#reroll")?.addEventListener("click",rerollMarket);
+  $("#resetRun")?.addEventListener("click",resetRun);
+  $$(".navbtn").forEach(btn=>btn.addEventListener("click",()=>{
+    const n=btn.dataset.nav,p=n==="evening"?"market":n;
+    if(p==="stash"){g.stashOpen=true;render();return;}
+    g.stashOpen=false;
+    if(p==="market"&&g.phase!=="market"){toast(g.phase==="day"?"Сначала закончи рабочий день.":"Из ночи нельзя вернуться на рынок.");render();return;}
+    if(p==="night"&&g.phase!=="night"){toast("Ночь откроется после вечера.");render();return;}
+    if(p==="day"&&g.phase!=="day"){toast("День начнётся после завершения ночи.");render();return;}
+    setPhase(p);
+  }));
+  render();
+}
+init();
+})();
+</script>
+</body>
+</html>
